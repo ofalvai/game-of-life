@@ -1,0 +1,34 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "."
+		}
+	],
+    "build_systems":
+    [
+        {
+            "name": "GoL SDL Build",
+            "working_dir": "C:/Program Files (x86)/CodeBlocks/MinGW/bin",
+            "selector": "source.c",
+            "cmd": [
+                "mingw32-gcc.exe",
+                "$file_path/$file_base_name.c",
+                // MAGIC
+                "$file_path/draw.c",
+                "$file_path/game_logic.c",
+                "-o", "$file_path/${file_base_name}.exe",
+                "-I../include", "-L../lib",
+                // MAGIC:
+                "-I $file_path/draw.h",
+                "-I $file_path/game_logic.h",
+                "-lmingw32", "-lSDLmain", "-lSDL", "-lSDL_gfx", "-mwindows",
+                "-lm", "-Wall",
+                "&&", "$file_path/$file_base_name.exe"
+            ],
+            "shell": true
+        }
+
+    ]
+}

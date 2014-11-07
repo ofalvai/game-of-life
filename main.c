@@ -3,77 +3,96 @@
 #include <SDL.h>
 #include <SDL_gfxPrimitives.h> 
 #include <math.h>
+#include <time.h>
 
-typedef struct Cell {
-    int x, y,
-        status; // 0: dead, 1: alive
-} Cell;
+#include "draw.h"
+#include "game_logic.h"
 
-void handle_events(SDL_Event ev);
-void draw_grid(SDL_Surface *screen, int game_width, int game_height);
-Cell *init(SDL_Surface *screen, int game_width, int game_height);
+
+int **arr_2d_create(int width, int height);
+Uint32 timer(Uint32 ms, void *param);
 
 enum { WIDTH = 800, HEIGHT = 600 };
 
 int main(int argc, char *argv[]) {
     int game_width = 20;
     int game_height = 20;
+    // TODO: 250x250-nél nem megy
     
-    SDL_Event ev;
     SDL_Surface *screen;
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Event ev;
+    SDL_TimerID timer_id;
+
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
     screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_ANYFORMAT);
     SDL_WM_SetCaption("Game of Life", "Game of Life");
 
+    double cell_size;
+    if(game_width > game_height)
+        cell_size = (float) WIDTH / (float) game_width;
+    else
+        cell_size = (float) HEIGHT / (float) game_height;
 
-    Cell *cells = init(screen, game_width, game_height);
-    SDL_Flip(screen);
-    
+    int **cells = arr_2d_create(game_width, game_height);
+    // TEST
+    cells[0][0] = 1;
+    cells[14][3] = 1;
+    cells[14][12] = 1;
+    cells[6][1] = 1;
+    cells[11][0] = 1;
+    cells[14][9] = 1;
+
+
+    clear(screen, game_width, game_height, cell_size);
+    draw_grid(screen, game_width, game_height, cell_size);
+
+    srand(time(0));
+    generate(screen, game_width, game_height, cell_size);
+
+
+    timer_id = SDL_AddTimer(100, timer, NULL);
 
     while(SDL_WaitEvent(&ev) && ev.type != SDL_QUIT) {
-        handle_events(ev);
-    }
-    free(cells);
-
-    SDL_Quit();
-    return 0;
-
-}
-
-void handle_events(SDL_Event ev) {
-    // switch(ev.type)
-}
-
-Cell *init(SDL_Surface *screen, int game_width, int game_height) {
-
-    int num = game_width * game_height;
-    double length;
-    if(game_width > game_height)
-        length = (float) WIDTH / (float) game_width;
-    else
-        length = (float) HEIGHT / (float) game_height;
-
-    Cell *cells = (Cell*) malloc(num * sizeof(Cell));
-
-    // Drawing cells
-    int i, j;
-    for(i = 0; i < game_height; i++) {
-        for(j = 0; j < game_width; j++) {
-            int x_0 = j*length;
-            int y_0 = i*length;
-            boxRGBA(screen, x_0, y_0, x_0+length, y_0+length, 255-i*i*2, 255-j*j*2, 255, 255);
+        switch(ev.type) {
+            case SDL_USEREVENT:
+                // clear(screen, game_width, game_height, cell_size);
+                // generate(screen, game_width, game_height, cell_size);
+                break;
+            case SDL_KEYDOWN:
+                if(ev.key.keysym.sym == 27)
+                    SDL_Quit();
+                else if(ev.key.keysym.sym == 13) {
+                    clear(screen, game_width, game_height, cell_size);
+                    // generate(screen, game_width, game_height, cell_size);
+                    draw_state(screen, cells, game_width, game_height, cell_size);
+                }
+                break;
         }
     }
 
-    // Horizontal lines
-    for(i = 0; i <= (game_height*length); i += length) {
-        lineRGBA(screen, 0, i, game_width*length, i, 0, 0, 0, 255);
+    free(cells[0]);
+    free(cells);
+    SDL_RemoveTimer(timer_id);
+    SDL_Quit();
+    return 0;
+}
+
+int **arr_2d_create(int width, int height) {
+    int **array;
+    array = (int **) malloc(height*sizeof(int*));
+    array[0] = (int *) malloc(height*width*sizeof(int));
+
+    int i;
+    for (i = 0; i < height; ++i) {
+        array[i] = array[0] + i*width;
     }
 
-    // Vertical lines
-    for(i = 0; i <= (game_width*length); i += length) {
-        lineRGBA(screen, i, 0, i, game_height*length, 0, 0, 0, 255);
-    }
+    return array;
+}
 
-    return cells;
+Uint32 timer(Uint32 ms, void *param) {
+    SDL_Event ev;
+    ev.type = SDL_USEREVENT;
+    SDL_PushEvent(&ev);
+    return ms;
 }
