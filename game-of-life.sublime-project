@@ -18,11 +18,13 @@
                 // MAGIC
                 "$file_path/draw.c",
                 "$file_path/game_logic.c",
+                "$file_path/utils.c",
                 "-o", "$file_path/${file_base_name}.exe",
                 "-I../include", "-L../lib",
                 // MAGIC:
                 "-I $file_path/draw.h",
                 "-I $file_path/game_logic.h",
+                "-I $file_path/utils.h",
                 "-lmingw32", "-lSDLmain", "-lSDL", "-lSDL_gfx", "-mwindows",
                 "-lm", "-Wall",
                 "&&", "$file_path/$file_base_name.exe"

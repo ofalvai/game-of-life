@@ -31,6 +31,7 @@ void draw_cell(SDL_Surface *screen, int x, int y, double cell_size, int color) {
         r = g = b = a = 255;
     } else if(color == 1) {
         r = g = b = 0;
+        a = 255;
     }
     boxRGBA(screen, x*cell_size, y*cell_size, x*cell_size+cell_size, y*cell_size+cell_size, r, g, b, a);
 }
@@ -48,7 +49,7 @@ void draw_state(SDL_Surface *screen, int **cells, int game_width, int game_heigh
     int x, y;
     for(y = 0; y < game_height; ++y) {
         for(x = 0; x < game_height; ++x) {
-            draw_cell(screen, y, x, cell_size, cells[y][x]);
+            draw_cell(screen, x, y, cell_size, cells[y][x]);
         }
     }
     
