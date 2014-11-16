@@ -12,8 +12,8 @@
 enum { WIDTH = 800, HEIGHT = 600 };
 
 int main(int argc, char *argv[]) {
-    int game_width = 20;
-    int game_height = 20;
+    int game_width = 200;
+    int game_height = 200;
     
     SDL_Surface *screen;
     SDL_Event ev;
@@ -29,58 +29,86 @@ int main(int argc, char *argv[]) {
     else
         cell_size = (float) HEIGHT / (float) game_height;
 
-    srand(time(0));
     int **cells = arr_2d_create(game_width, game_height);
     int **next_round_cells = arr_2d_create(game_width, game_height);
 
-    draw_grid(screen, game_width, game_height, cell_size);
+    srand(time(0));
+    random_state(cells, game_width, game_height);
     
-    // Initial state test:
-    // Blinker:
-    cells[10][10] = 1;
-    cells[10][11] = 1;
-    cells[10][12] = 1;
+    int grid_color = 1;
+    draw_state(screen, cells, game_width, game_height, cell_size, grid_color);
 
-    // Glider:
-    cells[0][2] = 1;
-    cells[1][0] = 1;
-    cells[1][2] = 1;
-    cells[2][1] = 1;
-    cells[2][2] = 1;
-
-    // Beacon:
-    cells[0][15] = 1;
-    cells[0][16] = 1;
-    cells[1][15] = 1;
-    cells[1][16] = 1;
-    cells[2][17] = 1;
-    cells[2][18] = 1;
-    cells[3][17] = 1;
-    cells[3][18] = 1;
-    
-    draw_state(screen, cells, game_width, game_height, cell_size);
-
-    timer_id = SDL_AddTimer(100, timer, NULL);
+    timer_id = SDL_AddTimer(200, timer, NULL);
+    int autoplay = 0;
 
     while(SDL_WaitEvent(&ev) && ev.type != SDL_QUIT) {
         switch(ev.type) {
             case SDL_USEREVENT:
-                // clear(screen, game_width, game_height, cell_size);
-                // generate(screen, game_width, game_height, cell_size);
-                break;
+                if(autoplay) {
+                    clear(screen, game_width, game_height, cell_size, grid_color);
+                    enum_next_round(cells, next_round_cells, game_width, game_height);
+                    draw_state(screen, next_round_cells, game_width, game_height, cell_size, grid_color);
+                    arr_2d_copy(next_round_cells, cells, game_width, game_height);
+                    arr_2d_clear(next_round_cells, game_width, game_height);
+                }
+            break;
             case SDL_KEYDOWN:
+                // printf("%d\n", ev.key.keysym.sym);
                 if(ev.key.keysym.sym == 27)
                     // Escape key
                     SDL_Quit();
                 else if(ev.key.keysym.sym == 13) {
                     // Enter key
-                    clear(screen, game_width, game_height, cell_size);
+                    // Next state
+                    clear(screen, game_width, game_height, cell_size, grid_color);
                     enum_next_round(cells, next_round_cells, game_width, game_height);
-                    draw_state(screen, next_round_cells, game_width, game_height, cell_size);
+                    draw_state(screen, next_round_cells, game_width, game_height, cell_size, grid_color);
                     arr_2d_copy(next_round_cells, cells, game_width, game_height);
-                    clear_next_round(next_round_cells, game_width, game_height);
+                    arr_2d_clear(next_round_cells, game_width, game_height);
+                } else if(ev.key.keysym.sym == 32) {
+                    // Space key
+                    // Auto play
+                    (autoplay) ? (autoplay = 0) : (autoplay = 1);
+                } else if(ev.key.keysym.sym == 114) {
+                    // R key
+                    // New random state
+                    autoplay = 0;
+                    arr_2d_clear(cells, game_width, game_height);
+                    random_state(cells, game_width, game_height);
+                    draw_state(screen, cells, game_width, game_height, cell_size, grid_color);
+                } else if(ev.key.keysym.sym == 99) {
+                    // C key
+                    // Clear map
+                    autoplay = 0;
+                    arr_2d_clear(cells, game_width, game_height);
+                    draw_state(screen, cells, game_width, game_height, cell_size, grid_color);
+                } else if(ev.key.keysym.sym == 103) {
+                    // G key
+                    // Turn grid on/off
+                    (grid_color) ? (grid_color = 0) : (grid_color = 1);
+                    draw_grid(screen, game_width, game_height, cell_size, grid_color);
+                    SDL_Flip(screen);
+
                 }
-                break;
+            break;
+            case SDL_MOUSEBUTTONUP:
+                if(ev.button.button == SDL_BUTTON_LEFT) {
+                    if(ev.button.x > cell_size * game_width
+                        || ev.button.y > cell_size * game_height)
+                        continue;
+
+                    autoplay = 0;
+
+                    int x = (int) floor(ev.button.x / cell_size);
+                    int y = (int) floor(ev.button.y / cell_size);
+                    
+                    int prev = cells[y][x];
+                    (prev) ? (cells[y][x] = 0) : (cells[y][x] = 1);
+                    draw_cell(screen, x, y, cell_size, cells[y][x]);
+                    draw_grid(screen, game_width, game_height, cell_size, grid_color);
+                    SDL_Flip(screen);
+                }
+            break;
         }
     }
 

@@ -24,6 +24,15 @@ void arr_2d_copy(int **from, int **to, int width, int height) {
     }
 }
 
+void arr_2d_clear(int **arr, int width, int height) {
+    int x, y;
+    for(y = 0; y < height; ++y) {
+        for(x = 0; x < width; ++x) {
+            arr[y][x] = 0;
+        }
+    }
+}
+
 Uint32 timer(Uint32 ms, void *param) {
     SDL_Event ev;
     ev.type = SDL_USEREVENT;

@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <time.h>
 #include "game_logic.h"
 
 int count_living_neighbours(int **cells, int x, int y, int game_width, int game_height) {
@@ -29,6 +31,18 @@ int count_living_neighbours(int **cells, int x, int y, int game_width, int game_
     return found;
 }
 
+void random_state(int **cells, int game_width, int game_height) {
+    int x, y;
+    double scale = 1.00;
+    int density = 3;
+    
+    for(y = 0; y < game_height*scale; ++y) {
+        for(x = 0; x < game_width*scale; ++x) {
+            cells[y][x] = (rand() % density) == 0 ? 1: 0;
+        }
+    }
+}
+
 void enum_next_round(int **cells, int **next_round_cells, int game_width, int game_height) {
     int x, y;
     for(y = 0; y < game_height; ++y) {
@@ -53,15 +67,6 @@ void enum_next_round(int **cells, int **next_round_cells, int game_width, int ga
                     next_round_cells[y][x] = 0;
                 }
             }
-        }
-    }
-}
-
-void clear_next_round(int **next_round_cells, int game_width, int game_height) {
-    int x, y;
-    for(y = 0; y < game_height; ++y) {
-        for(x = 0; x < game_width; ++x) {
-            next_round_cells[y][x] = 0;
         }
     }
 }
