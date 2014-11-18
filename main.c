@@ -5,38 +5,37 @@
 #include <math.h>
 #include <time.h>
 
+#include "shared.h"
 #include "draw.h"
 #include "game_logic.h"
 #include "utils.h"
 
-enum { WIDTH = 800, HEIGHT = 600 };
-
 int main(int argc, char *argv[]) {
-    int game_width = 200;
-    int game_height = 200;
+    // shared.h
+    if(game_width > game_height) {
+        cell_size = (double) window_width / (double) game_width;
+    }
+    else {
+        cell_size = (double) window_height / (double) game_height;
+    }
+
     
     SDL_Surface *screen;
     SDL_Event ev;
     SDL_TimerID timer_id;
 
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
-    screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_ANYFORMAT);
+    screen = SDL_SetVideoMode(window_width, window_height, 0, SDL_ANYFORMAT);
     SDL_WM_SetCaption("Game of Life", "Game of Life");
-
-    double cell_size;
-    if(game_width > game_height)
-        cell_size = (float) WIDTH / (float) game_width;
-    else
-        cell_size = (float) HEIGHT / (float) game_height;
 
     int **cells = arr_2d_create(game_width, game_height);
     int **next_round_cells = arr_2d_create(game_width, game_height);
 
     srand(time(0));
-    random_state(cells, game_width, game_height);
+    random_state(cells);
     
     int grid_color = 1;
-    draw_state(screen, cells, game_width, game_height, cell_size, grid_color);
+    draw_state(screen, cells, grid_color);
 
     timer_id = SDL_AddTimer(200, timer, NULL);
     int autoplay = 0;
@@ -45,9 +44,9 @@ int main(int argc, char *argv[]) {
         switch(ev.type) {
             case SDL_USEREVENT:
                 if(autoplay) {
-                    clear(screen, game_width, game_height, cell_size, grid_color);
-                    enum_next_round(cells, next_round_cells, game_width, game_height);
-                    draw_state(screen, next_round_cells, game_width, game_height, cell_size, grid_color);
+                    clear(screen, grid_color);
+                    enum_next_round(cells, next_round_cells);
+                    draw_state(screen, next_round_cells, grid_color);
                     arr_2d_copy(next_round_cells, cells, game_width, game_height);
                     arr_2d_clear(next_round_cells, game_width, game_height);
                 }
@@ -60,9 +59,9 @@ int main(int argc, char *argv[]) {
                 else if(ev.key.keysym.sym == 13) {
                     // Enter key
                     // Next state
-                    clear(screen, game_width, game_height, cell_size, grid_color);
-                    enum_next_round(cells, next_round_cells, game_width, game_height);
-                    draw_state(screen, next_round_cells, game_width, game_height, cell_size, grid_color);
+                    clear(screen, grid_color);
+                    enum_next_round(cells, next_round_cells);
+                    draw_state(screen, next_round_cells, grid_color);
                     arr_2d_copy(next_round_cells, cells, game_width, game_height);
                     arr_2d_clear(next_round_cells, game_width, game_height);
                 } else if(ev.key.keysym.sym == 32) {
@@ -74,19 +73,19 @@ int main(int argc, char *argv[]) {
                     // New random state
                     autoplay = 0;
                     arr_2d_clear(cells, game_width, game_height);
-                    random_state(cells, game_width, game_height);
-                    draw_state(screen, cells, game_width, game_height, cell_size, grid_color);
+                    random_state(cells);
+                    draw_state(screen, cells, grid_color);
                 } else if(ev.key.keysym.sym == 99) {
                     // C key
                     // Clear map
                     autoplay = 0;
                     arr_2d_clear(cells, game_width, game_height);
-                    draw_state(screen, cells, game_width, game_height, cell_size, grid_color);
+                    draw_state(screen, cells, grid_color);
                 } else if(ev.key.keysym.sym == 103) {
                     // G key
                     // Turn grid on/off
                     (grid_color) ? (grid_color = 0) : (grid_color = 1);
-                    draw_grid(screen, game_width, game_height, cell_size, grid_color);
+                    draw_grid(screen, grid_color);
                     SDL_Flip(screen);
 
                 }
@@ -104,8 +103,8 @@ int main(int argc, char *argv[]) {
                     
                     int prev = cells[y][x];
                     (prev) ? (cells[y][x] = 0) : (cells[y][x] = 1);
-                    draw_cell(screen, x, y, cell_size, cells[y][x]);
-                    draw_grid(screen, game_width, game_height, cell_size, grid_color);
+                    draw_cell(screen, x, y, cells[y][x]);
+                    draw_grid(screen, grid_color);
                     SDL_Flip(screen);
                 }
             break;
