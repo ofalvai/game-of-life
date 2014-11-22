@@ -3,7 +3,8 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "."
+			"path": ".",
+            "file_exclude_patterns": [".gitignore"]
 		}
 	],
     "build_systems":
@@ -14,22 +15,28 @@
             "selector": "source.c",
             "cmd": [
                 "mingw32-gcc.exe",
-                "$file_path/$file_base_name.c",
-                // MAGIC
+                // "$file_path/$file_base_name.c",
+                "$file_path/main.c",
+
+                // Other source files
                 "$file_path/draw.c",
                 "$file_path/game_logic.c",
                 "$file_path/utils.c",
                 "$file_path/shared.c",
-                "-o", "$file_path/${file_base_name}.exe",
+
+                "-o", "$file_path/Game of Life.exe",
+
+                // Includes:
                 "-I../include", "-L../lib",
-                // MAGIC:
                 "-I $file_path/draw.h",
                 "-I $file_path/game_logic.h",
                 "-I $file_path/utils.h",
                 "-I $file_path/shared.h",
+
+                // Links:
                 "-lmingw32", "-lSDLmain", "-lSDL", "-lSDL_gfx", "-mwindows",
                 "-lm", "-Wall",
-                "&&", "$file_path/$file_base_name.exe"
+                "&&", "$file_path/Game of Life.exe"
             ],
             "shell": true
         }
