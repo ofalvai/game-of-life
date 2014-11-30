@@ -23,6 +23,7 @@
                 "$file_path/game_logic.c",
                 "$file_path/utils.c",
                 "$file_path/shared.c",
+                "$file_path/file_handling.c",
 
                 "-o", "$file_path/Game of Life.exe",
 
@@ -32,11 +33,12 @@
                 "-I $file_path/game_logic.h",
                 "-I $file_path/utils.h",
                 "-I $file_path/shared.h",
+                "-I $file_path/file_handling.h",
 
                 // Links:
                 "-lmingw32", "-lSDLmain", "-lSDL", "-lSDL_gfx", "-mwindows",
-                "-lm", "-Wall",
-                "&&", "$file_path/Game of Life.exe"
+                "-lm", "-Wall"
+                // "&&", "$file_path/Game of Life.exe"
             ],
             "shell": true
         }

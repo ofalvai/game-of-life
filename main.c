@@ -1,3 +1,4 @@
+#define DEBUG
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
@@ -9,8 +10,41 @@
 #include "draw.h"
 #include "game_logic.h"
 #include "utils.h"
+#include "file_handling.h"
 
 int main(int argc, char *argv[]) {
+    /**
+     * A shared.c-ben van definiálva a window_width, window_height (800x600),
+     * és a game_width, game_height (ezeket a fájlból beolvasott játékállapot felülírhatja!)
+     */
+
+    /**
+     * A játékállást tároló tömbök inicializálása.
+     * Azért van szükség egy másodikra, mert a következő kör kiértékelésekor egyszerre kell
+     * vizsgálni minden cellát, nem lehet közben módosítani az aktuális kör értékeit.
+     */
+    int **cells = arr_2d_create(game_width, game_height);
+    int **next_round_cells = arr_2d_create(game_width, game_height);
+
+    /**
+     * Parancssoros indítás:
+     * A paraméter egy szöveges fájl elérési útja.
+     * Adatformátum:
+     *      első sor: szélesség szóköz magasság
+     *      egy elválasztó üres sor
+     *      TODO: tovább írni
+     */
+    int cmdline = 0;
+    if(argc == 2) {
+        cmdline = 1;
+        int return_value = read_file(argv[1], cells, &game_width, &game_height);
+        if(return_value == 1) {
+            perror("Hiba a fajl megnyitasakor");
+            exit(1);
+        }
+    }
+
+
     /**
      * Kiszámolja egy cella méretét az ablakmérethez és a pálya felbontásához képest.
      * Működik téglalap alakú pálya esetén is.
@@ -30,16 +64,17 @@ int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
     screen = SDL_SetVideoMode(window_width, window_height, 0, SDL_ANYFORMAT);
     SDL_WM_SetCaption("Game of Life", "Game of Life");
+    printf("tesztttttt\n");
 
-    // Ebben van mindig a jelenleg kirajzolt játékállapot
-    int **cells = arr_2d_create(game_width, game_height);
-    // Ebbe számolódik ki a következő állapot
-    // A jelenlegi állapotot nem lehet módosítani, mert egyszerre kell kiértékelni minden cellát.
-    int **next_round_cells = arr_2d_create(game_width, game_height);
+
+
+
 
     // Random kezdőállapot
-    srand(time(0));
-    random_state(cells);
+    if(!cmdline) {
+        srand(time(0));
+        random_state(cells);
+    }
     
     // Állapot és rács kirajzolása
     int grid_color = 1;

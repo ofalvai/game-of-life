@@ -42,6 +42,7 @@ int count_living_neighbours(int **cells, int x, int y) {
     return found;
 }
 
+
 /**
  * Generál egy random játékállapotot
  *
