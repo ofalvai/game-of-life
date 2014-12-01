@@ -13,7 +13,7 @@
  * @param y Vizsgált cella y koordinátája
  * @return Élő szomszédok száma.
  */
-int count_living_neighbours(int **cells, int x, int y) {
+int count_living_neighbours(int** const cells, int const x, int const y) {
     int found = 0;
     if(x != 0 && y != 0 && cells[y-1][x-1])
         // Top left
@@ -73,7 +73,7 @@ void random_state(int **cells) {
  * @param **cells A jelenlegi játékállást tartalmazó 2 dimenziós tömbre pointer
  * @param **next_round_cells Ebbe írja az új kört
  */
-void enum_next_round(int **cells, int **next_round_cells) {
+void enum_next_round(int** const cells, int **next_round_cells) {
     int x, y;
     for(y = 0; y < game_height; ++y) {
         for(x = 0; x < game_width; ++x) {

@@ -37,8 +37,8 @@
 
                 // Links:
                 "-lmingw32", "-lSDLmain", "-lSDL", "-lSDL_gfx", "-mwindows",
-                "-lm", "-Wall"
-                // "&&", "$file_path/Game of Life.exe"
+                "-lm", "-Wall",
+                "&&", "$file_path/Game of Life.exe"
             ],
             "shell": true
         }

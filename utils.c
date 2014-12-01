@@ -10,7 +10,7 @@
  * 
  * @return Pointer pointerekre, amik a sorokra mutatnak.
  */
-int **arr_2d_create(int width, int height) {
+int **arr_2d_create(int const width, int const height) {
     int **array;
     array = (int **) calloc(height, sizeof(int*));
     array[0] = (int *) calloc(height*width, sizeof(int));
@@ -30,7 +30,7 @@ int **arr_2d_create(int width, int height) {
  * @param width másolandó tömb szélessége
  * @param height másolandó tömb magassága
  */
-void arr_2d_copy(int **from, int **to, int width, int height) {
+void arr_2d_copy(int** const from, int **to, int const width, int const height) {
     int x, y;
     for(y = 0; y < height; ++y) {
         for(x = 0; x < width; ++x) {
@@ -45,7 +45,7 @@ void arr_2d_copy(int **from, int **to, int width, int height) {
  * @param width tömb szélessége
  * @param height tömb magassága
  */
-void arr_2d_clear(int **arr, int width, int height) {
+void arr_2d_clear(int **arr, int const width, int const height) {
     int x, y;
     for(y = 0; y < height; ++y) {
         for(x = 0; x < width; ++x) {
@@ -64,7 +64,7 @@ void arr_2d_clear(int **arr, int width, int height) {
  * 
  * @return hány ms múlva hívódjon meg újra
  */
-Uint32 timer(Uint32 ms, void *param) {
+Uint32 timer(Uint32 const ms, void *param) {
     SDL_Event ev;
     ev.type = SDL_USEREVENT;
     SDL_PushEvent(&ev);

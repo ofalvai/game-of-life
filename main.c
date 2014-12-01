@@ -32,7 +32,12 @@ int main(int argc, char *argv[]) {
      * Adatformátum:
      *      első sor: szélesség szóköz magasság
      *      egy elválasztó üres sor
-     *      TODO: tovább írni
+     *      y db sor, soronként x db szám, 1/0 (élő/halott)
+     * Pl:
+     *      4 2 
+     *      
+     *      1 0 1 0
+     *      0 0 0 0
      */
     int cmdline = 0;
     if(argc == 2) {
@@ -64,7 +69,6 @@ int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
     screen = SDL_SetVideoMode(window_width, window_height, 0, SDL_ANYFORMAT);
     SDL_WM_SetCaption("Game of Life", "Game of Life");
-    printf("tesztttttt\n");
 
 
 
@@ -133,9 +137,9 @@ int main(int argc, char *argv[]) {
             break;
             // Képernyőre kattintás
             case SDL_MOUSEBUTTONUP:
-                // A játéktéren kívüli kattintás nem érdekel minket
-                // Megy az event loop tovább
                 if(ev.button.button == SDL_BUTTON_LEFT) {
+                    // A játéktéren kívüli kattintás nem érdekel minket
+                    // Megy az event loop tovább
                     if(ev.button.x > cell_size * game_width
                         || ev.button.y > cell_size * game_height)
                         continue;
