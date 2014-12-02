@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
             break;
 
             case SDL_MOUSEMOTION:
-                hover_handler(ev);
+                // hover_handler(ev);
             break;
         }
     }

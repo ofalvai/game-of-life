@@ -85,7 +85,6 @@ void click_handler(SDL_MouseButtonEvent const button, SDL_Surface *screen, int *
             (cells[y][x]) ? (cells[y][x] = 0) : (cells[y][x] = 1);
             
             draw_cell(screen, x, y, cells[y][x], grid_enabled);
-            // draw_grid(screen, grid_enabled);
             SDL_Flip(screen);
         }
     }
