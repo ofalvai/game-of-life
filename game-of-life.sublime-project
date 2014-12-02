@@ -11,34 +11,38 @@
     [
         {
             "name": "GoL SDL Build",
-            "working_dir": "C:/Program Files (x86)/CodeBlocks/MinGW/bin",
+
             "selector": "source.c",
             "cmd": [
-                "mingw32-gcc.exe",
-                // "$file_path/$file_base_name.c",
-                "$file_path/main.c",
+                "C:/Program Files (x86)/CodeBlocks/MinGW/bin/mingw32-gcc.exe",
 
-                // Other source files
+                // Source files
+                "$file_path/main.c",
                 "$file_path/draw.c",
                 "$file_path/game_logic.c",
                 "$file_path/utils.c",
                 "$file_path/shared.c",
                 "$file_path/file_handling.c",
+                "$file_path/events.c",
 
                 "-o", "$file_path/Game of Life.exe",
 
+                "-LC:/Program Files (x86)/CodeBlocks/MinGW/bin/lib",
+
                 // Includes:
-                "-I../include", "-L../lib",
+                "-I C:/Program Files (x86)/CodeBlocks/MinGW/bin/include",
                 "-I $file_path/draw.h",
                 "-I $file_path/game_logic.h",
                 "-I $file_path/utils.h",
                 "-I $file_path/shared.h",
                 "-I $file_path/file_handling.h",
+                "-I $file_path/events.h",
 
                 // Links:
-                "-lmingw32", "-lSDLmain", "-lSDL", "-lSDL_gfx", "-mwindows",
+                "-lmingw32", "-lSDLmain", "-lSDL", "-lSDL_gfx", "-lSDL_image", "-mwindows",
+
                 "-lm", "-Wall",
-                "&&", "$file_path/Game of Life.exe"
+                "&&", "Game of Life.exe"
             ],
             "shell": true
         }

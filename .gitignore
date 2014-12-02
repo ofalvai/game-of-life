@@ -1,3 +1,5 @@
 *.sublime-workspace
 *.dll
 *.exe
+stdout.txt
+stderr.txt
