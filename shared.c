@@ -12,6 +12,7 @@ int game_height = 50;
 
 int autoplay = 0;
 int grid_enabled = 1;
+int alive_cell_count = 0;
 
 double cell_size; // a main() függvényben számolódik ki
 

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <SDL.h>
 #include <SDL_gfxPrimitives.h> 
+#include <SDL_ttf.h>
 #include <math.h>
 #include <time.h>
 
@@ -68,12 +69,19 @@ int main(int argc, char *argv[]) {
     }
 
     SDL_Surface *screen;
+    SDL_Surface *text;
+    TTF_Font *font;
     SDL_Event ev;
     SDL_TimerID timer_id;
 
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
     screen = SDL_SetVideoMode(window_width, window_height, 0, SDL_ANYFORMAT);
     SDL_WM_SetCaption("Game of Life", "Game of Life");
+    TTF_Init();
+    font = TTF_OpenFont("arial.ttf", 20);
+    // Csak hogy ne panaszkodjon a fordító a használatlan változóra:
+    text = NULL;
+
 
 
     // Random kezdőállapot
@@ -85,8 +93,10 @@ int main(int argc, char *argv[]) {
     // Állapot és rács kirajzolása
     // grid_enabled a shared.c-ben
     draw_state(screen, cells, grid_enabled);
-
     draw_sidebar(screen);
+    draw_alive_cell_count(screen, text, font, alive_cell_count);
+
+
 
     // Időzítő a következő állapotra lépésre. Alapból kikapcsolva
     // autoplay a shared.c-ben
@@ -100,6 +110,7 @@ int main(int argc, char *argv[]) {
                     clear(screen, grid_enabled);
                     enum_next_round(cells, next_round_cells);
                     draw_state(screen, next_round_cells, grid_enabled);
+                    draw_alive_cell_count(screen, text, font, alive_cell_count);
                     arr_2d_copy(next_round_cells, cells, game_width, game_height);
                     arr_2d_clear(next_round_cells, game_width, game_height);
                 }
@@ -108,11 +119,13 @@ int main(int argc, char *argv[]) {
             // Billentyűparancsok
             case SDL_KEYDOWN:
                 key_handler(ev.key.keysym.sym, screen, cells, next_round_cells);
+                // draw_alive_cell_count(screen, text, font, alive_cell_count);
             break;
 
             // Képernyőre kattintás
             case SDL_MOUSEBUTTONUP:
                 click_handler(ev.button, screen, cells, next_round_cells);
+                draw_alive_cell_count(screen, text, font, alive_cell_count);
             break;
 
             case SDL_MOUSEMOTION:
@@ -126,6 +139,9 @@ int main(int argc, char *argv[]) {
     free(next_round_cells[0]);
     free(next_round_cells);
     SDL_RemoveTimer(timer_id);
+    TTF_CloseFont(font);
+    SDL_FreeSurface(screen);
+    SDL_FreeSurface(text);
     SDL_Quit();
     return 0;
 }

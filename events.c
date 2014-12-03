@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <math.h>
 
 #include "events.h"
@@ -42,12 +43,12 @@ void key_handler(SDLKey const key, SDL_Surface *screen, int **cells, int **next_
     } else if(key == 99) {
         // C: pálya törlése
         autoplay = 0;
+        alive_cell_count = 0;
         arr_2d_clear(cells, game_width, game_height);
         draw_state(screen, cells, grid_enabled);
     } else if(key == 103) {
         // G: grid ki/be kapcsolása
         (grid_enabled) ? (grid_enabled = 0) : (grid_enabled = 1);
-        // clear(screen, grid_enabled);
         draw_state(screen, cells, grid_enabled);
         SDL_Flip(screen);
 
@@ -82,15 +83,18 @@ void click_handler(SDL_MouseButtonEvent const button, SDL_Surface *screen, int *
 
             int x = (int) floor(button.x / cell_size);
             int y = (int) floor(button.y / cell_size);
-            (cells[y][x]) ? (cells[y][x] = 0) : (cells[y][x] = 1);
+            
+            if(cells[y][x] == 0) {
+                cells[y][x] = 1;
+                alive_cell_count++;
+            } else {
+                cells[y][x] = 0;
+                alive_cell_count--;
+            }
             
             draw_cell(screen, x, y, cells[y][x], grid_enabled);
             SDL_Flip(screen);
         }
-    }
-
-    void hover_handler(SDL_Event ev) {
-        
     }
 
 }

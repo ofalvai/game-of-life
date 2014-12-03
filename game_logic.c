@@ -49,13 +49,16 @@ int count_living_neighbours(int** const cells, int const x, int const y) {
  * @param cells 2 dimenziós tömbre mutató pointer
  */
 void random_state(int **cells) {
+    alive_cell_count = 0;
     int x, y;
     double scale = 1.00;
     int density = 4;
     
     for(y = 0; y < game_height*scale; ++y) {
         for(x = 0; x < game_width*scale; ++x) {
-            cells[y][x] = (rand() % density) == 0 ? 1: 0;
+            int rand_value = (rand() % density) == 0;
+            cells[y][x] = rand_value;
+            alive_cell_count += rand_value;
         }
     }
 }
@@ -74,6 +77,8 @@ void random_state(int **cells) {
  * @param **next_round_cells Ebbe írja az új kört
  */
 void enum_next_round(int** const cells, int **next_round_cells) {
+    // shared.c
+    alive_cell_count = 0;
     int x, y;
     for(y = 0; y < game_height; ++y) {
         for(x = 0; x < game_width; ++x) {
@@ -82,12 +87,14 @@ void enum_next_round(int** const cells, int **next_round_cells) {
             if(cells[y][x] == 1) {
                 if(living_neighbours == 2 || living_neighbours == 3) {
                     next_round_cells[y][x] = 1;
+                    alive_cell_count++;
                 } else {
                     next_round_cells[y][x] = 0;
                 }
             } else {
                 if(living_neighbours == 3) {
                     next_round_cells[y][x] = 1;
+                    alive_cell_count++;
                 } else {
                     next_round_cells[y][x] = 0;
                 }

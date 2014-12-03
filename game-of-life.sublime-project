@@ -27,7 +27,6 @@
 
                 "-o", "$file_path/Game of Life.exe",
 
-                "-LC:/Program Files (x86)/CodeBlocks/MinGW/bin/lib",
 
                 // Includes:
                 "-I C:/Program Files (x86)/CodeBlocks/MinGW/bin/include",
@@ -39,7 +38,8 @@
                 "-I $file_path/events.h",
 
                 // Links:
-                "-lmingw32", "-lSDLmain", "-lSDL", "-lSDL_gfx", "-lSDL_image", "-mwindows",
+                "-LC:/Program Files (x86)/CodeBlocks/MinGW/bin/lib",
+                "-lmingw32", "-lSDLmain", "-lSDL", "-lSDL_gfx", "-lSDL_image", "-lSDL_ttf", "-mwindows",
 
                 "-lm", "-Wall",
                 "&&", "Game of Life.exe"

@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <string.h>
 #include <SDL.h>
 #include <SDL_gfxPrimitives.h> 
 #include <SDL_image.h>
-#include <math.h>
-#include <time.h>
+#include <SDL_ttf.h>
 
 #include "shared.h"
 #include "draw.h"
@@ -97,4 +99,23 @@ void draw_sidebar(SDL_Surface *screen) {
 
     free(btn_next);
     free(btn_start);
+}
+
+void draw_text(SDL_Surface *screen, SDL_Surface *text, TTF_Font *font, char *text_str, int x, int y) {
+    SDL_Color black = {0, 0, 0};
+    text = TTF_RenderUTF8_Blended(font, text_str, black);
+    SDL_Rect target = {x, y, 200, 40};
+    SDL_FillRect(screen, &target, 0xFFFFFF);
+
+    SDL_BlitSurface(text, NULL, screen, &target);
+    SDL_Flip(screen);
+
+    // SDL_FreeSurface(text);
+    // SDL_FreeSurface() helyett inkább ezt a surface-t használjuk majd minden más szöveg kirajzolásához
+}
+
+void draw_alive_cell_count(SDL_Surface *screen, SDL_Surface *text, TTF_Font *font, int alive_cell_count) {
+    char count[13];
+    sprintf(count, "Alive: %d", alive_cell_count);
+    draw_text(screen, text, font, count, 610, 500);
 }

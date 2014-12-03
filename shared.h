@@ -10,6 +10,7 @@ extern double cell_size;
 
 extern int autoplay;
 extern int grid_enabled;
+extern int alive_cell_count;
 
 #define STRUCT_DEF
 // TODO: mi a francért nem lehet ezt extern-re rakni?! Ki kéne találni erre valamit...
