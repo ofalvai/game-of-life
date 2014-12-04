@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
             // Billentyűparancsok
             case SDL_KEYDOWN:
                 key_handler(ev.key.keysym.sym, screen, cells, next_round_cells);
-                // draw_alive_cell_count(screen, text, font, alive_cell_count);
+                draw_alive_cell_count(screen, text, font, alive_cell_count);
             break;
 
             // Képernyőre kattintás
