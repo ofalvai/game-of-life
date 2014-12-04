@@ -30,12 +30,6 @@
 
                 // Includes:
                 "-I C:/Program Files (x86)/CodeBlocks/MinGW/bin/include",
-                "-I $file_path/draw.h",
-                "-I $file_path/game_logic.h",
-                "-I $file_path/utils.h",
-                "-I $file_path/shared.h",
-                "-I $file_path/file_handling.h",
-                "-I $file_path/events.h",
 
                 // Links:
                 "-LC:/Program Files (x86)/CodeBlocks/MinGW/bin/lib",

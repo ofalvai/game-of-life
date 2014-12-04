@@ -11,6 +11,24 @@
 #include "shared.h"
 #include "draw.h"
 
+
+Rect logo_rect = {
+    601, // window_width -199
+    0,
+    199,
+    106
+};
+
+// (window_width-200) + ((200-gomb_szélesség) / 2)
+Rect btn_start_rect = { 616, 150, 168, 52 };
+
+Rect btn_next_rect = { 616, 222, 168, 52 };
+
+Rect btn_rnd_rect = { 616, 294, 83, 44 };
+
+Rect btn_clr_rect = { 699, 294, 83, 44 };
+
+
 /**
  * Kirajzol egy cellát a megfelelő helyre a képernyőn.
  * Nem jelenik meg egyből, kell egy SDl_Flip(screen) a kirajzoláshoz.
@@ -67,7 +85,6 @@ void draw_state(SDL_Surface *screen, int **cells, int grid_enabled) {
 
 /**
  * Kitörli a képernyőt (fehér lesz)
- * TODO: ezt lehet elég lenne egy nagy téglalap rajzolással.
  * 
  * @param screen [description]
  * @param grid_enabled [description]
@@ -81,6 +98,14 @@ void clear(SDL_Surface *screen, int grid_enabled) {
     }
 }
 
+void draw_image(SDL_Surface *screen, char *img_path, Rect img_rect) {
+    SDL_Surface *img_surface;
+    img_surface = IMG_Load(img_path);
+    SDL_Rect img_target_rect = {img_rect.x, img_rect.y, 0, 0};
+    SDL_BlitSurface(img_surface, NULL, screen, &img_target_rect);
+    free(img_surface);
+}
+
 
 /**
  * A jobb oldali sidebar kirajzolása: gombok, feliratok.
@@ -91,26 +116,18 @@ void draw_sidebar(SDL_Surface *screen) {
     // Fehér háttér
     boxRGBA(screen, window_width-199, 0, window_width, window_height, 255, 255, 255, 255);
 
+    // Logó
+    draw_image(screen, "assets/logo.png", logo_rect);
+
     // GOMBOK
-    // A shared.c-ben vannak a koordináták definiálva
-
-    // START gomb
-    SDL_Surface *btn_start;
-    btn_start = IMG_Load("assets/start.png");
-    SDL_Rect btn_start_target_rect = {btn_start_rect.x, btn_start_rect.y, 0, 0};
-    SDL_BlitSurface(btn_start, NULL, screen, &btn_start_target_rect);
-
-    // NEXT gomb
-    SDL_Surface *btn_next;
-    btn_next = IMG_Load("assets/next.png");
-    SDL_Rect btn_next_target_rect = {btn_next_rect.x, btn_next_rect.y, 0, 0};
-    SDL_BlitSurface(btn_next, NULL, screen, &btn_next_target_rect);    
-
+    draw_image(screen, "assets/start.png", btn_start_rect);
+    draw_image(screen, "assets/next.png", btn_next_rect);
+    draw_image(screen, "assets/rnd.png", btn_rnd_rect);
+    draw_image(screen, "assets/clr.png", btn_clr_rect);
+        
 
     SDL_Flip(screen);
 
-    free(btn_next);
-    free(btn_start);
 }
 
 /**

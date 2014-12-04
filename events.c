@@ -13,21 +13,15 @@
 /**
  * Leellenőrzi, hogy a kattintás egy adott téglalapon (gombon) belül van-e
  * 
- * @param click_x kattintás x koordinátája
- * @param click_y kattintás y koordinátája
- * @param range_x téglalap bal széle
- * @param range_y téglalap teteje
- * @param width téglalap szélessége
- * @param height téglalap magassága
+ * @param click Kattintás eseménye, ezen belül van x és y koordináta
+ * @param range Az adott téglalap struktúrája. Tagjai: x, y, width, height
+ * 
  * @return 1, ha benne van, 0 ha nincs
  */
-int click_in_range(int const click_x, int const click_y, int const range_x, int const range_y, int const width, int const height) {
-    return click_x >= range_x && click_x <= range_x+width && click_y >= range_y && click_y <= range_y+height;
-}
 
-// int click_in_range(int const click_x, int const click_y, Button btn) {
-//     return click_x >= btn.x && click_x <= btn.x+btn.width && click_y >= btn.y && click_y <= btn.y+btn.height;
-// }
+int click_in_range(SDL_MouseButtonEvent click, Rect range) {
+    return click.x >= range.x && click.x <= range.x+range.width && click.y >= range.y && click.y <= range.y+range.height;
+}
 
 
 /**
@@ -45,7 +39,6 @@ void key_handler(SDLKey const key, SDL_Surface *screen, int **cells, int **next_
         SDL_Quit();
     else if(key == 13) {
         // Enter: következő állapotra ugrás
-        // TODO: globalokat kiszedni a paraméterek közül?
         clear(screen, grid_enabled);
         enum_next_round(cells, next_round_cells);
         draw_state(screen, next_round_cells, grid_enabled);
@@ -54,6 +47,7 @@ void key_handler(SDLKey const key, SDL_Surface *screen, int **cells, int **next_
     } else if(key == 32) {
         // Space: autoplay
         (autoplay) ? (autoplay = 0) : (autoplay = 1);
+        toggle_start_pause(screen);
     } else if(key == 114) {
         // R: új random állapot
         autoplay = 0;
@@ -84,36 +78,49 @@ void key_handler(SDLKey const key, SDL_Surface *screen, int **cells, int **next_
  * @param cells jelenlegi játékállás adata
  * @param next_round_cells következő kör adata
  */
-void click_handler(SDL_MouseButtonEvent const button, SDL_Surface *screen, int **cells, int **next_round_cells) {
-    if(button.button == SDL_BUTTON_LEFT) {
-        // printf("x: %d, y: %d\n", button.x, button.y);
+void click_handler(SDL_MouseButtonEvent const click, SDL_Surface *screen, int **cells, int **next_round_cells) {
+    if(click.button == SDL_BUTTON_LEFT) {
+        // printf("x: %d, y: %d\n", click.x, click.y);
 
-        if(button.x > cell_size * game_width) {
-            // Sidebar-ra kattintás
-
-            // TODO: globalokat nagybetuvel?
-            if(click_in_range(button.x, button.y, btn_start_rect.x, btn_start_rect.y, btn_start_rect.width, btn_start_rect.height)) {
+        if(click.x > cell_size * game_width) {
+            // Sidebar-on belül van a kattintás
+            if(click_in_range(click, btn_start_rect)) {
                 // START gomb megnyomása:
                 (autoplay) ? (autoplay = 0) : (autoplay = 1);
                 toggle_start_pause(screen);
-            } else if(click_in_range(button.x, button.y, btn_next_rect.x, btn_next_rect.y, btn_next_rect.width, btn_next_rect.height)) {
+
+            } else if(click_in_range(click, btn_next_rect)) {
                 // NEXT gomb megnyomása
                 clear(screen, grid_enabled);
                 enum_next_round(cells, next_round_cells);
                 draw_state(screen, next_round_cells, grid_enabled);
                 arr_2d_copy(next_round_cells, cells, game_width, game_height);
                 arr_2d_clear(next_round_cells, game_width, game_height);
+
+            } else if(click_in_range(click, btn_rnd_rect)) {
+                // RND gomb megnyomása
+                autoplay = 0;
+                arr_2d_clear(cells, game_width, game_height);
+                random_state(cells);
+                draw_state(screen, cells, grid_enabled);
+
+            } else if(click_in_range(click, btn_clr_rect)) {
+                // CLR gomb megnyomása
+                autoplay = 0;
+                alive_cell_count = 0;
+                arr_2d_clear(cells, game_width, game_height);
+                draw_state(screen, cells, grid_enabled);
             }
 
-        } else if (button.y > cell_size * game_height) {
+        } else if (click.y > cell_size * game_height) {
             // Játéktéren kívül kattintás (ha van)
             return; 
         } else {
             // Egyébként a kattintott cella átkapcsolása
             autoplay = 0;
 
-            int x = (int) floor(button.x / cell_size);
-            int y = (int) floor(button.y / cell_size);
+            int x = (int) floor(click.x / cell_size);
+            int y = (int) floor(click.y / cell_size);
             
             if(cells[y][x] == 0) {
                 cells[y][x] = 1;

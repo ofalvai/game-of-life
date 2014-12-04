@@ -77,8 +77,11 @@ int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
     screen = SDL_SetVideoMode(window_width, window_height, 0, SDL_ANYFORMAT);
     SDL_WM_SetCaption("Game of Life", "Game of Life");
+    // Valami háttérszín, ami nem fehér és nem fekete
+    SDL_FillRect(screen, NULL, 0xEEEEEE);
+
     TTF_Init();
-    font = TTF_OpenFont("arial.ttf", 20);
+    font = TTF_OpenFont("assets/Fipps-Regular.ttf", 16);
     // Csak hogy ne panaszkodjon a fordító a használatlan változóra:
     text = NULL;
 

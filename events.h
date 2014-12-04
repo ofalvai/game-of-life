@@ -1,14 +1,10 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-
-// void ev_next_round();
-// void ev_random_state();
-// void ev_clear();
+#include "draw.h" // Rect struct miatt
 
 
-int click_in_range(int const click_x, int const click_y, int const range_x_1, int const range_y_1, int const range_x_2, int const range_y_2);
-// int click_in_range(int const click_x, int const click_y, Button btn);
+int click_in_range(SDL_MouseButtonEvent click, Rect range);
 
 void key_handler(SDLKey key, SDL_Surface *screen, int **cells, int **next_round_cells);
 
