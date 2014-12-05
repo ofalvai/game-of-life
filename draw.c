@@ -19,14 +19,27 @@ Rect logo_rect = {
     106
 };
 
-// (window_width-200) + ((200-gomb_szélesség) / 2)
-Rect btn_start_rect = { 616, 150, 168, 52 };
 
-Rect btn_next_rect = { 616, 222, 168, 52 };
+Rect btn_start_rect = { 618, 150, 168, 52 };
 
-Rect btn_rnd_rect = { 616, 294, 83, 44 };
+Rect btn_next_rect = { 618, 222, 168, 52 };
 
+Rect btn_rnd_rect = { 618, 294, 83, 44 };
 Rect btn_clr_rect = { 699, 294, 83, 44 };
+
+Rect text_game_size_rect = { 670, 368, 200, 40};
+Rect text_game_width_rect = { 643, 406, 50, 20};
+Rect text_game_height_rect = { 724, 406, 50, 20};
+Rect input_dimensions_rect = { 618, 404, 168, 44 };
+
+Rect btn_width_minus_rect = { 631, 456, 18, 18};
+Rect btn_width_plus_rect = { 669, 456, 18, 18};
+
+Rect btn_height_minus_rect = { 715, 456, 18, 18};
+Rect btn_height_plus_rect = { 753, 456, 18, 18};
+
+Rect text_grid_rect = { 618, 514, 200, 40};
+Rect text_alive_rect = { 618, 563, 200, 40};
 
 
 /**
@@ -52,7 +65,7 @@ Rect btn_clr_rect = { 699, 294, 83, 44 };
 
      if(grid) {
         // Ha van grid, először rajzol egy grid színű, adott méretű négyzetet
-        boxRGBA(screen, x_coord, y_coord, x_coord+cell_size, y_coord+cell_size, 120, 120, 120, 255);
+        boxRGBA(screen, x_coord, y_coord, x_coord+cell_size, y_coord+cell_size, 180, 180, 180, 255);
         // Majd erre rárajzolja az 1-1-1-1 pixellel kisebb tényleges négyzetet
         boxRGBA(screen, x_coord+1, y_coord+1, x_coord+cell_size-1, y_coord+cell_size-1, r, g, b, a);
     } else {
@@ -112,19 +125,33 @@ void draw_image(SDL_Surface *screen, char *img_path, Rect img_rect) {
  * 
  * @param screen surface, amire rajzol (pointer)
  */
-void draw_sidebar(SDL_Surface *screen) {
+void draw_sidebar(SDL_Surface *screen, TTF_Font *font) {
     // Fehér háttér
     boxRGBA(screen, window_width-199, 0, window_width, window_height, 255, 255, 255, 255);
 
-    // Logó
+    // Logó, gombok, feliratok
     draw_image(screen, "assets/logo.png", logo_rect);
 
-    // GOMBOK
     draw_image(screen, "assets/start.png", btn_start_rect);
+
     draw_image(screen, "assets/next.png", btn_next_rect);
+
     draw_image(screen, "assets/rnd.png", btn_rnd_rect);
     draw_image(screen, "assets/clr.png", btn_clr_rect);
-        
+
+    draw_text(screen, font, "SIZE:", text_game_size_rect, 1);
+    draw_image(screen, "assets/dimensions.png", input_dimensions_rect);
+
+    draw_image(screen, "assets/plus.png", btn_width_plus_rect);
+    draw_image(screen, "assets/minus.png", btn_width_minus_rect);
+
+    draw_image(screen, "assets/plus.png", btn_height_plus_rect);
+    draw_image(screen, "assets/minus.png", btn_height_minus_rect);
+
+    draw_text(screen, font, "Grid.....[X]", text_grid_rect, 1);
+
+    update_alive_cell_count(screen, font, alive_cell_count);
+    update_game_dimensions(screen, font);
 
     SDL_Flip(screen);
 
@@ -157,22 +184,24 @@ void toggle_start_pause(SDL_Surface *screen) {
  * @param text surface, amire a szöveget rajzolja (majd egyesíti a fővel) 
  * @param font betöltött betűtípusra mutató pointer 
  * @param text_str kiírandó szöveg stirngje
- * @param x bal felső koordináta
- * @param y bal felső koordináta
+ * @param text_rect koordinátákat tartalmazó Rect struct
  */
-void draw_text(SDL_Surface *screen, SDL_Surface *text, TTF_Font *font, char *text_str, int x, int y) {
+void draw_text(SDL_Surface *screen, TTF_Font *font, char *text_str, Rect text_rect, int redraw_bg) {
     SDL_Color black = {0, 0, 0};
+    SDL_Surface *text;
     text = TTF_RenderUTF8_Blended(font, text_str, black);
-    SDL_Rect target = {x, y, 200, 40};
+    SDL_Rect target = {text_rect.x, text_rect.y, text_rect.width, text_rect.height};
 
-    // Előtte a területet kifestjük fehérrel
-    SDL_FillRect(screen, &target, 0xFFFFFF);
+    if(redraw_bg) {
+        // Előtte a területet kifestjük fehérrel, ha kell
+        // Van, amikot a Rect túl nagy, és belerajzolna másba
+        SDL_FillRect(screen, &target, 0xFFFFFF);
+    }
 
     SDL_BlitSurface(text, NULL, screen, &target);
     SDL_Flip(screen);
 
-    // SDL_FreeSurface(text);
-    // SDL_FreeSurface() helyett inkább ezt a surface-t használjuk majd minden más szöveg kirajzolásához
+    SDL_FreeSurface(text);
 }
 
 /**
@@ -181,10 +210,32 @@ void draw_text(SDL_Surface *screen, SDL_Surface *text, TTF_Font *font, char *tex
  * @param screen fő surface
  * @param text surface, amire a szöveg kerül
  * @param font betöltött betűtípusra mutató pointer
- * @param alive_cell_count élő cellák száma
+ * @param alive_cell_count élő cellák száma (shared.c)
  */
-void draw_alive_cell_count(SDL_Surface *screen, SDL_Surface *text, TTF_Font *font, int alive_cell_count) {
-    char count[13];
-    sprintf(count, "Alive: %d", alive_cell_count);
-    draw_text(screen, text, font, count, 610, 500);
+void update_alive_cell_count(SDL_Surface *screen, TTF_Font *font, int alive_cell_count) {
+    char count[14];
+    sprintf(count, "Alive...%d", alive_cell_count);
+    draw_text(screen, font, count, text_alive_rect, 1);
+}
+
+void update_game_dimensions(SDL_Surface *screen, TTF_Font *font) {
+    char width_str[4], height_str[4];
+    sprintf(width_str, "%d", game_width);
+    sprintf(height_str, "%d", game_height);
+
+    // Szegény ember text-align:center-je :'(
+    // Ha háromjegyű a szám, kicsit balrább kerül
+    if(game_width > 99) {
+        text_game_width_rect.x -= 10;
+    }
+    if(game_height > 99) {
+        text_game_height_rect.x -= 5;
+    }
+
+    // Valamiért túl nagy a szöveg surface-je bal-felül, ezért ha a draw_text() kitöltené a hátterét is,
+    // az már belelógna felül a kirajzolt szegélybe.
+    // Ezért inkább újrarajzoljuk a szegélyt, és redraw_bg=0-val hívjuk meg a draw_text()-et
+    draw_image(screen, "assets/dimensions.png", input_dimensions_rect);
+    draw_text(screen, font, width_str, text_game_width_rect, 0);
+    draw_text(screen, font, height_str, text_game_height_rect, 0);
 }

@@ -110,6 +110,20 @@ void click_handler(SDL_MouseButtonEvent const click, SDL_Surface *screen, int **
                 alive_cell_count = 0;
                 arr_2d_clear(cells, game_width, game_height);
                 draw_state(screen, cells, grid_enabled);
+            } else if(click_in_range(click, btn_width_plus_rect)) {
+                // Szélesség [+] gomb
+                int new_game_width = game_width+1;
+                int new_game_height = game_height+1;
+                cells = arr_2d_resize(cells, game_width, game_height, new_game_width, new_game_height);
+                game_width = new_game_width;
+                game_height = new_game_height;
+
+            } else if(click_in_range(click, btn_width_minus_rect)) {
+                // Szélesség [-] gomb
+            } else if(click_in_range(click, btn_height_plus_rect)) {
+                // Magasság [+] gomb
+            } else if(click_in_range(click, btn_height_minus_rect)) {
+                // Magasság [-] gomb
             }
 
         } else if (click.y > cell_size * game_height) {

@@ -39,6 +39,24 @@ void arr_2d_copy(int** const from, int **to, int const width, int const height) 
     }
 }
 
+int **arr_2d_resize(int **old_array, int const old_width, int const old_height, int const new_width, int const new_height) {
+    int **new_array;
+    new_array = arr_2d_create(new_width, new_height);
+
+    int safe_width, safe_height;
+    safe_width = (old_width > new_width ? new_width : old_width);
+    safe_height = (old_height > new_height ? new_height : old_height);
+    printf("old: %d, %d\n", old_width, old_height);
+    printf("new: %d, %d\n", new_width, new_height);
+    printf("safe: %d, %d\n", safe_width, safe_height);
+
+    arr_2d_copy(old_array, new_array, safe_width, safe_height);
+    free(old_array[0]);
+    free(old_array);
+
+    return new_array;
+}
+
 /**
  * 2 dimenziós tömb minden elemét 0-ra állítja
  * @param arr tömbre mutató pointer
