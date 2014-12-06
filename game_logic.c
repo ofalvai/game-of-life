@@ -11,32 +11,34 @@
  * @param cells A jelenlegi játékállapotot tartalmazó tömb.
  * @param x Vizsgált cella x koordinátája
  * @param y Vizsgált cella y koordinátája
+ * 
  * @return Élő szomszédok száma.
  */
 int count_living_neighbours(int** const cells, int const x, int const y) {
     int found = 0;
     if(x != 0 && y != 0 && cells[y-1][x-1])
-        // Top left
+        // Bal felső
         found++;
     if(y != 0 && cells[y-1][x])
-        // Top
+        // Felső
         found++;
     if(y != 0 && cells[y-1][x+1])
-        // Top right
+        // Jobb felső
         found++;
     if(x != game_width-1 && cells[y][x+1])
-        // Right
+        // Jobb
         found++;
     if(x != game_width-1 && y != game_height-1 && cells[y+1][x+1])
-        // Bottom right
+        // Jobb alsó
         found++;
     if(y != game_height-1 && cells[y+1][x])
-        // Bottom
+        // Alsó
         found++;
     if(y != game_height-1 && x != 0 && cells[y+1][x-1])
-        // Bottom left
+        // Bal alsó
         found++;
     if(x != 0 && cells[y][x-1])
+        // Bal
         found++;
 
     return found;

@@ -43,6 +43,7 @@ int *split_line(char* const string, int const width) {
  * @param cells 2 dimenziós tömb, amibe a játékállapotot beleírja
  * @param game_width A fájlból kiolvasott játéktér szélesség (shared.c-ben definiált global)
  * @param game_height A fájlból kiolvasott játéktér magasság (shared.c-ben definiált global)
+ * 
  * @return Beolvasás sikeressége: 0: nincs hiba, 1: valami hiba történt
  */
 int read_file(char* const file_name, int **cells, int *game_width, int *game_height) {

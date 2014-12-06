@@ -13,8 +13,8 @@
 /**
  * Leellenőrzi, hogy a kattintás egy adott téglalapon (gombon) belül van-e
  * 
- * @param click Kattintás eseménye, ezen belül van x és y koordináta
- * @param range Az adott téglalap struktúrája. Tagjai: x, y, width, height
+ * @param click Kattintás eseménye, ezen belül van x és y koordináta.
+ * @param range Az adott téglalap struktúrája. Tagjai: x, y, w, h
  * 
  * @return 1, ha benne van, 0 ha nincs
  */
@@ -23,7 +23,18 @@ int click_in_range(SDL_MouseButtonEvent click, SDL_Rect range) {
     return click.x >= range.x && click.x <= range.x+range.w && click.y >= range.y && click.y <= range.y+range.h;
 }
 
+/**
+ * A játéktér átméretezését kezeli. Átméretezi az adattömböt, kiszámolja az új cell_size-t,
+ * és újrarajzol mindent.
+ * 
+ * @param screen Surface, amire rajzol.
+ * @param font Betöltött TTF_Font betűtípusra pointer
+ * @param cells Játékállást tartalmazó 2 dimenziós tömbre pointer.
+ * @param new_width Új szélesség (+-1)
+ * @param new_height Új magasság (+-1)
+ */
 void resize_handler(SDL_Surface *screen, TTF_Font *font, int **cells, int new_width, int new_height) {
+    // TODO: a másik tömböt is át kell méretezni!
     cells = arr_2d_resize(cells, game_width, game_height, new_width, new_height);
     game_width = new_width;
     game_height = new_height;
@@ -49,19 +60,18 @@ void resize_handler(SDL_Surface *screen, TTF_Font *font, int **cells, int new_wi
 /**
  * Az SDL_KEYDOWN eseményt kezeli le, a gombtól függően további függvényeket hív.
  * 
- * @param key lenyomott billentyű küdja
- * @param screen fő surface, amire az SDL rajzol
- * @param cells jelenlegi játékállás adata
- * @param next_round_cells következő kör adata
+ * @param key Lenyomott billentyű kódja.
+ * @param screen Surface, amire rajzol.
+ * @param cells Jelenlegi játékállás adata
+ * @param next_round_cells Következő kör adata
  */
 void key_handler(SDLKey const key, SDL_Surface *screen, TTF_Font *font, int **cells, int **next_round_cells) {
-    // printf("%d\n", key);
     if(key == 27)
         // ESC: kilépés a programból
         SDL_Quit();
     else if(key == 13) {
         // Enter: következő állapotra ugrás
-        clear(screen, grid_enabled);
+        clear(screen);
         enum_next_round(cells, next_round_cells);
         draw_state(screen, next_round_cells, grid_enabled);
         update_alive_cell_count(screen, font);
@@ -99,10 +109,11 @@ void key_handler(SDLKey const key, SDL_Surface *screen, TTF_Font *font, int **ce
 /**
  * SDL_MOUSEBUTTONUP eseményt kezeli le, a kattintás helyétől függően további függvényeket hív.
  * 
- * @param button kattintás adatai
- * @param screen fő surface, amire az SDL rajzol
- * @param cells jelenlegi játékállás adata
- * @param next_round_cells következő kör adata
+ * @param click Kattintás adatai.
+ * @param screen Surface, amire rajzol.
+ * @param font Betöltött TTF_Font betűtípusra pointer.
+ * @param cells Jelenlegi játékállás adata.
+ * @param next_round_cells Következő kör adata.
  */
 void click_handler(SDL_MouseButtonEvent const click, SDL_Surface *screen, TTF_Font *font, int **cells, int **next_round_cells) {
     if(click.button == SDL_BUTTON_LEFT) {
@@ -117,7 +128,7 @@ void click_handler(SDL_MouseButtonEvent const click, SDL_Surface *screen, TTF_Fo
 
             } else if(click_in_range(click, btn_next_rect)) {
                 // NEXT gomb
-                clear(screen, grid_enabled);
+                clear(screen);
                 enum_next_round(cells, next_round_cells);
                 draw_state(screen, next_round_cells, grid_enabled);
                 arr_2d_copy(next_round_cells, cells, game_width, game_height);

@@ -1,7 +1,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include <SDL.h> // Rect struct miatt
+#include <SDL.h> // SDL_Rect struct miatt
 
 
 int click_in_range(SDL_MouseButtonEvent click, SDL_Rect range);

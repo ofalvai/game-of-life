@@ -3,3 +3,4 @@
 *.exe
 stdout.txt
 stderr.txt
+doxygen

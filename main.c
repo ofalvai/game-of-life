@@ -1,4 +1,3 @@
-#define DEBUG
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
@@ -41,8 +40,12 @@ int main(int argc, char *argv[]) {
      *      1 0 1 0
      *      0 0 0 0
      */
+
     int cmdline = 0;
-    if(argc == 2) {
+    if(argc > 2) {
+        printf("Hibas parameterek\n");
+        printf("Hasznalat: \"Game of Life.exe\" [jatekallas_fajl]\n");
+    } else if(argc == 2) {
         cmdline = 1;
         int return_value = read_file(argv[1], cells, &game_width, &game_height);
         if(return_value == 1) {
@@ -68,6 +71,7 @@ int main(int argc, char *argv[]) {
         cell_size = (double) (window_width - 200) / game_width;
     }
 
+    // SDL inicializálás
     SDL_Surface *screen;
     TTF_Font *font;
     SDL_Event ev;
@@ -81,9 +85,10 @@ int main(int argc, char *argv[]) {
 
     TTF_Init();
     font = TTF_OpenFont("assets/Fipps-Regular.ttf", 16);
-    
-    
 
+    // Időzítő a következő állapotra lépésre. Alapból kikapcsolva
+    // autoplay a shared.c-ben
+    timer_id = SDL_AddTimer(200, timer, NULL);
 
 
     // Random kezdőállapot
@@ -92,25 +97,21 @@ int main(int argc, char *argv[]) {
         random_state(cells);
     }
     
-    // Állapot és rács kirajzolása
+    // Itt jön az igazi inicializálás!
+
     // grid_enabled a shared.c-ben
     draw_state(screen, cells, grid_enabled);
     draw_sidebar(screen, font);
     update_alive_cell_count(screen, font);
 
 
-
-
-    // Időzítő a következő állapotra lépésre. Alapból kikapcsolva
-    // autoplay a shared.c-ben
-    timer_id = SDL_AddTimer(200, timer, NULL);
-
+    // Event loop
     while(SDL_WaitEvent(&ev) && ev.type != SDL_QUIT) {
         switch(ev.type) {
             // Időzítő által létrehozott event
             case SDL_USEREVENT:
                 if(autoplay) {
-                    clear(screen, grid_enabled);
+                    clear(screen);
                     enum_next_round(cells, next_round_cells);
                     draw_state(screen, next_round_cells, grid_enabled);
                     update_alive_cell_count(screen, font);
@@ -138,7 +139,7 @@ int main(int argc, char *argv[]) {
     free(next_round_cells);
     SDL_RemoveTimer(timer_id);
     TTF_CloseFont(font);
-    // SDL_FreeSurface(screen);
+    SDL_FreeSurface(screen);
     SDL_Quit();
     return 0;
 }

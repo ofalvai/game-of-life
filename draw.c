@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <time.h>
 #include <string.h>
 #include <SDL.h>
 #include <SDL_gfxPrimitives.h> 
@@ -39,13 +37,13 @@ SDL_Rect text_alive_rect = { 618, 563, 200, 40};
 
 /**
  * Kirajzol egy cellát a megfelelő helyre a képernyőn.
- * Nem jelenik meg egyből, kell egy SDl_Flip(screen) a kirajzoláshoz.
+ * Nem jelenik meg egyből, kell egy SDL_Flip(screen) a kirajzoláshoz.
  * 
- * @param screen amire rajzol
- * @param x cella vízszintes koordinátája NxN-es tömbben 
- * @param y cella függőleges koordinátája NxN-es tömbben
- * @param color cella színe, 0: fehér (halott), 1: fekete (élő)
- * @param grid rajzoljon-e rácsot (keretet a négyzetre)
+ * @param screen Surface, amire rajzol.
+ * @param x Cella vízszintes koordinátája NxN-es tömbben. 
+ * @param y Cella függőleges koordinátája NxN-es tömbben.
+ * @param color Cella színe, 0: fehér (halott), 1: fekete (élő)
+ * @param grid Rajzoljon-e rácsot (keretet a négyzetre)
  */
  void draw_cell(SDL_Surface *screen, int x, int y, int color, int grid) {
      int r, g, b, a;
@@ -72,13 +70,90 @@ SDL_Rect text_alive_rect = { 618, 563, 200, 40};
  }
 
 
+
+/**
+ * Kitörli a képernyőt (fehér lesz)
+ * 
+ * @param screen Surface, amire rajzol
+ */
+void clear(SDL_Surface *screen) {
+    int x, y;
+    for(x = 0; x < game_height; x++) {
+        for(y = 0; y < game_width; y++) {
+            draw_cell(screen, y, x, 0, 0);
+        }
+    }
+}
+
+/**
+ * Általános függvény egy kép (bitmap) kirajzolására.
+ * 
+ * @param screen Surface, amire rajzol.
+ * @param img_path A bitmap elérési útja.
+ * @param img_rect SDL_Rect típusú struktúra a kép méreteivel és pozíciójával.
+ */
+void draw_image(SDL_Surface *screen, char *img_path, SDL_Rect img_rect) {
+    SDL_Surface *img_surface;
+    img_surface = IMG_Load(img_path);
+    SDL_BlitSurface(img_surface, NULL, screen, &img_rect);
+    free(img_surface);
+}
+
+/**
+ * Általános függvény szöveg kirajzolására.
+ * 
+ * @param screen Surface, amire rajzol.
+ * @param font Betöltött betűtípusra mutató pointer (TTF_Font). 
+ * @param text_str kiírandó szöveg stirngje.
+ * @param text_rect SDL_Rect típusú struktúra a szöveg méretével és pozíciójával.
+ */
+void draw_text(SDL_Surface *screen, TTF_Font *font, char *text_str, SDL_Rect text_rect, int redraw_bg) {
+    SDL_Color black = {0, 0, 0};
+    SDL_Surface *text;
+    text = TTF_RenderUTF8_Solid(font, text_str, black);
+
+    if(redraw_bg) {
+        // Előtte a területet kifestjük fehérrel, ha kell
+        // Van, amikot az SDL_Rect túl nagy, és belerajzolna másba
+        SDL_FillRect(screen, &text_rect, 0xFFFFFF);
+    }
+
+    SDL_BlitSurface(text, NULL, screen, &text_rect);
+    SDL_Flip(screen);
+
+    SDL_FreeSurface(text);
+}
+
+/**
+ * A négyzetrács és a sidebar közötti rész kitöltésére függvény.
+ * Ez akkor kell, ha nem NxN-es a játéktér, mert ekkor átméretezéskor
+ * "ottmarad" az előző játéktér kirajzolva.
+ * 
+ * @param screen Surface, amire rajzol.
+ */
+void redraw_empty_area(SDL_Surface *screen) {
+    int start_x = game_width * cell_size;
+    int start_y = game_height * cell_size;
+
+    // Alsó rész
+    SDL_Rect target = { 0, start_y, window_width-200, window_height-start_y };
+    SDL_FillRect(screen, &target, 0xEEEEEE);
+
+    // Jobb oldali rész
+    SDL_Rect target2 = { start_x, 0, window_width-200-start_x, window_height };
+    SDL_FillRect(screen, &target2, 0xEEEEEE);
+
+    SDL_Flip(screen);
+
+}
+
 /**
  * A tömbben tárolt állapot kirajzolása
  * Plusz a rácsot is megrajzolja a cellák közé.
  * 
- * @param screen amire rajzol
- * @param cells játékállapotot tartalmazó 2 dimenziós tömbre pointer
- * @param grid_enabled a kirajzolandó rács színe (0: fehér (kikapcsolt), 1: fekete)
+ * @param screen Surface, amire rajzol
+ * @param cells Játékállapotot tartalmazó 2 dimenziós tömbre pointer
+ * @param grid_enabled A kirajzolandó rács színe (0: fehér (kikapcsolt), 1: fekete).
  */
 void draw_state(SDL_Surface *screen, int **cells, int grid_enabled) {
     int x, y;
@@ -92,32 +167,10 @@ void draw_state(SDL_Surface *screen, int **cells, int grid_enabled) {
 }
 
 /**
- * Kitörli a képernyőt (fehér lesz)
+ * A jobb oldali sidebar kirajzolása: logó, gombok, feliratok.
  * 
- * @param screen [description]
- * @param grid_enabled [description]
- */
-void clear(SDL_Surface *screen, int grid_enabled) {
-    int x, y;
-    for(x = 0; x < game_height; x++) {
-        for(y = 0; y < game_width; y++) {
-            draw_cell(screen, y, x, 0, 0);
-        }
-    }
-}
-
-void draw_image(SDL_Surface *screen, char *img_path, SDL_Rect img_rect) {
-    SDL_Surface *img_surface;
-    img_surface = IMG_Load(img_path);
-    SDL_BlitSurface(img_surface, NULL, screen, &img_rect);
-    free(img_surface);
-}
-
-
-/**
- * A jobb oldali sidebar kirajzolása: gombok, feliratok.
- * 
- * @param screen surface, amire rajzol (pointer)
+ * @param screen Surface, amire rajzol
+ * @param font Betöltött TTF_Font betűtípusra pointer.
  */
 void draw_sidebar(SDL_Surface *screen, TTF_Font *font) {
     // Fehér háttér
@@ -151,11 +204,12 @@ void draw_sidebar(SDL_Surface *screen, TTF_Font *font) {
 
 }
 
+
 /**
  * Kicseréli a start gomb feliratát pause-ra, és fordítva.
  * Start-ra kattintáskor Pause lesz, arra kattintva megint Start.
  * 
- * @param screen surface, amire rajzol (pointer)
+ * @param screen Surface, amire rajzol.
  */
 void toggle_start_pause(SDL_Surface *screen) {
     SDL_Surface *btn_start;
@@ -170,31 +224,6 @@ void toggle_start_pause(SDL_Surface *screen) {
     free(btn_start);
 }
 
-/**
- * Általános függvény szöveg kirajzolására.
- * 
- * @param screen a fő surface (pointer)
- * @param text surface, amire a szöveget rajzolja (majd egyesíti a fővel) 
- * @param font betöltött betűtípusra mutató pointer 
- * @param text_str kiírandó szöveg stirngje
- * @param text_rect koordinátákat tartalmazó Rect struct
- */
-void draw_text(SDL_Surface *screen, TTF_Font *font, char *text_str, SDL_Rect text_rect, int redraw_bg) {
-    SDL_Color black = {0, 0, 0};
-    SDL_Surface *text;
-    text = TTF_RenderUTF8_Solid(font, text_str, black);
-
-    if(redraw_bg) {
-        // Előtte a területet kifestjük fehérrel, ha kell
-        // Van, amikot a Rect túl nagy, és belerajzolna másba
-        SDL_FillRect(screen, &text_rect, 0xFFFFFF);
-    }
-
-    SDL_BlitSurface(text, NULL, screen, &text_rect);
-    SDL_Flip(screen);
-
-    SDL_FreeSurface(text);
-}
 
 /**
  * Kiírja a sidebar-ra, hogy hány cella él jelenleg.
@@ -210,6 +239,13 @@ void update_alive_cell_count(SDL_Surface *screen, TTF_Font *font) {
     draw_text(screen, font, count, text_alive_rect, 1);
 }
 
+
+/**
+ * A játéktér méretének átállítása után kiírja a sidebar-ra az új méretet.
+ * 
+ * @param screen Surface, amire rajzol.
+ * @param font Betöltött TTF_Font betűtípusra pointer.
+ */
 void update_game_dimensions(SDL_Surface *screen, TTF_Font *font) {
     char width_str[4], height_str[4];
     sprintf(width_str, "%d", game_width);
@@ -230,20 +266,4 @@ void update_game_dimensions(SDL_Surface *screen, TTF_Font *font) {
     draw_image(screen, "assets/dimensions.png", input_dimensions_rect);
     draw_text(screen, font, width_str, text_game_width_rect, 0);
     draw_text(screen, font, height_str, text_game_height_rect, 0);
-}
-
-void redraw_empty_area(SDL_Surface *screen) {
-    int start_x = game_width * cell_size;
-    int start_y = game_height * cell_size;
-
-    // Alsó rész
-    SDL_Rect target = { 0, start_y, window_width-200, window_height-start_y };
-    SDL_FillRect(screen, &target, 0xEEEEEE);
-
-    // Jobb oldali rész
-    SDL_Rect target2 = { start_x, 0, window_width-200-start_x, window_height };
-    SDL_FillRect(screen, &target2, 0xEEEEEE);
-
-    SDL_Flip(screen);
-
 }
