@@ -12,34 +12,29 @@
 #include "draw.h"
 
 
-Rect logo_rect = {
-    601, // window_width -199
-    0,
-    199,
-    106
-};
+SDL_Rect logo_rect = { 601, 0, 199, 106 };
 
+SDL_Rect btn_start_rect = { 618, 150, 168, 52 };
 
-Rect btn_start_rect = { 618, 150, 168, 52 };
+SDL_Rect btn_next_rect = { 618, 222, 168, 52 };
 
-Rect btn_next_rect = { 618, 222, 168, 52 };
+SDL_Rect btn_rnd_rect = { 618, 294, 83, 44 };
+SDL_Rect btn_clr_rect = { 699, 294, 83, 44 };
 
-Rect btn_rnd_rect = { 618, 294, 83, 44 };
-Rect btn_clr_rect = { 699, 294, 83, 44 };
+SDL_Rect text_game_size_rect = { 670, 368, 200, 40};
+SDL_Rect text_game_width_rect = { 643, 406, 50, 20};
+SDL_Rect text_game_height_rect = { 724, 406, 50, 20};
+SDL_Rect input_dimensions_rect = { 618, 404, 168, 44 };
 
-Rect text_game_size_rect = { 670, 368, 200, 40};
-Rect text_game_width_rect = { 643, 406, 50, 20};
-Rect text_game_height_rect = { 724, 406, 50, 20};
-Rect input_dimensions_rect = { 618, 404, 168, 44 };
+SDL_Rect btn_width_minus_rect = { 631, 456, 18, 18};
+SDL_Rect btn_width_plus_rect = { 669, 456, 18, 18};
 
-Rect btn_width_minus_rect = { 631, 456, 18, 18};
-Rect btn_width_plus_rect = { 669, 456, 18, 18};
+SDL_Rect btn_height_minus_rect = { 715, 456, 18, 18};
+SDL_Rect btn_height_plus_rect = { 753, 456, 18, 18};
 
-Rect btn_height_minus_rect = { 715, 456, 18, 18};
-Rect btn_height_plus_rect = { 753, 456, 18, 18};
+SDL_Rect text_grid_rect = { 618, 514, 200, 40};
+SDL_Rect text_alive_rect = { 618, 563, 200, 40};
 
-Rect text_grid_rect = { 618, 514, 200, 40};
-Rect text_alive_rect = { 618, 563, 200, 40};
 
 
 /**
@@ -111,11 +106,10 @@ void clear(SDL_Surface *screen, int grid_enabled) {
     }
 }
 
-void draw_image(SDL_Surface *screen, char *img_path, Rect img_rect) {
+void draw_image(SDL_Surface *screen, char *img_path, SDL_Rect img_rect) {
     SDL_Surface *img_surface;
     img_surface = IMG_Load(img_path);
-    SDL_Rect img_target_rect = {img_rect.x, img_rect.y, 0, 0};
-    SDL_BlitSurface(img_surface, NULL, screen, &img_target_rect);
+    SDL_BlitSurface(img_surface, NULL, screen, &img_rect);
     free(img_surface);
 }
 
@@ -150,7 +144,7 @@ void draw_sidebar(SDL_Surface *screen, TTF_Font *font) {
 
     draw_text(screen, font, "Grid.....[X]", text_grid_rect, 1);
 
-    update_alive_cell_count(screen, font, alive_cell_count);
+    update_alive_cell_count(screen, font);
     update_game_dimensions(screen, font);
 
     SDL_Flip(screen);
@@ -165,7 +159,6 @@ void draw_sidebar(SDL_Surface *screen, TTF_Font *font) {
  */
 void toggle_start_pause(SDL_Surface *screen) {
     SDL_Surface *btn_start;
-    SDL_Rect btn_start_target_rect = {btn_start_rect.x, btn_start_rect.y, 0, 0};
 
     // int autoplay: shared.c-ben
     if(autoplay) {
@@ -173,7 +166,7 @@ void toggle_start_pause(SDL_Surface *screen) {
     } else {
         btn_start = IMG_Load("assets/start.png");
     }
-    SDL_BlitSurface(btn_start, NULL, screen, &btn_start_target_rect);
+    SDL_BlitSurface(btn_start, NULL, screen, &btn_start_rect);
     free(btn_start);
 }
 
@@ -186,19 +179,18 @@ void toggle_start_pause(SDL_Surface *screen) {
  * @param text_str kiírandó szöveg stirngje
  * @param text_rect koordinátákat tartalmazó Rect struct
  */
-void draw_text(SDL_Surface *screen, TTF_Font *font, char *text_str, Rect text_rect, int redraw_bg) {
+void draw_text(SDL_Surface *screen, TTF_Font *font, char *text_str, SDL_Rect text_rect, int redraw_bg) {
     SDL_Color black = {0, 0, 0};
     SDL_Surface *text;
-    text = TTF_RenderUTF8_Blended(font, text_str, black);
-    SDL_Rect target = {text_rect.x, text_rect.y, text_rect.width, text_rect.height};
+    text = TTF_RenderUTF8_Solid(font, text_str, black);
 
     if(redraw_bg) {
         // Előtte a területet kifestjük fehérrel, ha kell
         // Van, amikot a Rect túl nagy, és belerajzolna másba
-        SDL_FillRect(screen, &target, 0xFFFFFF);
+        SDL_FillRect(screen, &text_rect, 0xFFFFFF);
     }
 
-    SDL_BlitSurface(text, NULL, screen, &target);
+    SDL_BlitSurface(text, NULL, screen, &text_rect);
     SDL_Flip(screen);
 
     SDL_FreeSurface(text);
@@ -212,8 +204,8 @@ void draw_text(SDL_Surface *screen, TTF_Font *font, char *text_str, Rect text_re
  * @param font betöltött betűtípusra mutató pointer
  * @param alive_cell_count élő cellák száma (shared.c)
  */
-void update_alive_cell_count(SDL_Surface *screen, TTF_Font *font, int alive_cell_count) {
-    char count[14];
+void update_alive_cell_count(SDL_Surface *screen, TTF_Font *font) {
+    char count[] = "Alive: ";
     sprintf(count, "Alive...%d", alive_cell_count);
     draw_text(screen, font, count, text_alive_rect, 1);
 }
@@ -238,4 +230,20 @@ void update_game_dimensions(SDL_Surface *screen, TTF_Font *font) {
     draw_image(screen, "assets/dimensions.png", input_dimensions_rect);
     draw_text(screen, font, width_str, text_game_width_rect, 0);
     draw_text(screen, font, height_str, text_game_height_rect, 0);
+}
+
+void redraw_empty_area(SDL_Surface *screen) {
+    int start_x = game_width * cell_size;
+    int start_y = game_height * cell_size;
+
+    // Alsó rész
+    SDL_Rect target = { 0, start_y, window_width-200, window_height-start_y };
+    SDL_FillRect(screen, &target, 0xEEEEEE);
+
+    // Jobb oldali rész
+    SDL_Rect target2 = { start_x, 0, window_width-200-start_x, window_height };
+    SDL_FillRect(screen, &target2, 0xEEEEEE);
+
+    SDL_Flip(screen);
+
 }

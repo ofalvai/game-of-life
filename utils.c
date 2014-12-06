@@ -46,13 +46,10 @@ int **arr_2d_resize(int **old_array, int const old_width, int const old_height, 
     int safe_width, safe_height;
     safe_width = (old_width > new_width ? new_width : old_width);
     safe_height = (old_height > new_height ? new_height : old_height);
-    printf("old: %d, %d\n", old_width, old_height);
-    printf("new: %d, %d\n", new_width, new_height);
-    printf("safe: %d, %d\n", safe_width, safe_height);
 
     arr_2d_copy(old_array, new_array, safe_width, safe_height);
-    free(old_array[0]);
-    free(old_array);
+    // free(old_array[0]);
+    // free(old_array);
 
     return new_array;
 }

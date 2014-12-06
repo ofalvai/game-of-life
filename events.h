@@ -1,14 +1,16 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include "draw.h" // Rect struct miatt
+#include <SDL.h> // Rect struct miatt
 
 
-int click_in_range(SDL_MouseButtonEvent click, Rect range);
+int click_in_range(SDL_MouseButtonEvent click, SDL_Rect range);
 
-void key_handler(SDLKey key, SDL_Surface *screen, int **cells, int **next_round_cells);
+void key_handler(SDLKey key, SDL_Surface *screen, TTF_Font *font, int **cells, int **next_round_cells);
 
-void click_handler(SDL_MouseButtonEvent const button, SDL_Surface *screen, int **cells, int **next_round_cells);
+void resize_handler(SDL_Surface *screen, TTF_Font *font, int **cells, int new_width, int new_height);
+
+void click_handler(SDL_MouseButtonEvent const button, SDL_Surface *screen, TTF_Font *font, int **cells, int **next_round_cells);
 
 void hover_handler(SDL_Event ev);
 

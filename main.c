@@ -81,6 +81,8 @@ int main(int argc, char *argv[]) {
 
     TTF_Init();
     font = TTF_OpenFont("assets/Fipps-Regular.ttf", 16);
+    
+    
 
 
 
@@ -94,7 +96,8 @@ int main(int argc, char *argv[]) {
     // grid_enabled a shared.c-ben
     draw_state(screen, cells, grid_enabled);
     draw_sidebar(screen, font);
-    update_alive_cell_count(screen, font, alive_cell_count);
+    update_alive_cell_count(screen, font);
+
 
 
 
@@ -110,7 +113,7 @@ int main(int argc, char *argv[]) {
                     clear(screen, grid_enabled);
                     enum_next_round(cells, next_round_cells);
                     draw_state(screen, next_round_cells, grid_enabled);
-                    update_alive_cell_count(screen, font, alive_cell_count);
+                    update_alive_cell_count(screen, font);
                     arr_2d_copy(next_round_cells, cells, game_width, game_height);
                     arr_2d_clear(next_round_cells, game_width, game_height);
                 }
@@ -118,18 +121,13 @@ int main(int argc, char *argv[]) {
 
             // Billentyűparancsok
             case SDL_KEYDOWN:
-                key_handler(ev.key.keysym.sym, screen, cells, next_round_cells);
-                update_alive_cell_count(screen, font, alive_cell_count);
+                key_handler(ev.key.keysym.sym, screen, font, cells, next_round_cells);
             break;
 
             // Képernyőre kattintás
             case SDL_MOUSEBUTTONUP:
-                click_handler(ev.button, screen, cells, next_round_cells);
-                update_alive_cell_count(screen, font, alive_cell_count);
-            break;
-
-            case SDL_MOUSEMOTION:
-                // hover_handler(ev);
+                click_handler(ev.button, screen, font, cells, next_round_cells);
+                update_alive_cell_count(screen, font);
             break;
         }
     }
@@ -140,7 +138,7 @@ int main(int argc, char *argv[]) {
     free(next_round_cells);
     SDL_RemoveTimer(timer_id);
     TTF_CloseFont(font);
-    SDL_FreeSurface(screen);
+    // SDL_FreeSurface(screen);
     SDL_Quit();
     return 0;
 }
