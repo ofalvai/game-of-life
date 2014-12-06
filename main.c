@@ -76,8 +76,13 @@ int main(int argc, char *argv[]) {
     TTF_Font *font;
     SDL_Event ev;
     SDL_TimerID timer_id;
-
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+
+    // Ablaknak ikon varázslás:
+    SDL_Surface *icon;
+    icon = SDL_LoadBMP("assets/icon.bmp");
+    SDL_WM_SetIcon(icon,NULL);
+
     screen = SDL_SetVideoMode(window_width, window_height, 0, SDL_ANYFORMAT);
     SDL_WM_SetCaption("Game of Life", "Game of Life");
     // Valami háttérszín, ami nem fehér és nem fekete
@@ -100,6 +105,9 @@ int main(int argc, char *argv[]) {
     // Itt jön az igazi inicializálás!
 
     // grid_enabled a shared.c-ben
+    if(game_width > 70 || game_height > 70) {
+        grid_enabled = 0;
+    }
     draw_state(screen, cells, grid_enabled);
     draw_sidebar(screen, font);
     update_alive_cell_count(screen, font);

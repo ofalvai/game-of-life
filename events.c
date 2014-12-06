@@ -81,7 +81,6 @@ void key_handler(SDLKey const key, SDL_Surface *screen, TTF_Font *font, int **ce
         // Space: autoplay
         (autoplay) ? (autoplay = 0) : (autoplay = 1);
         toggle_start_pause(screen);
-        update_alive_cell_count(screen, font);
     } else if(key == 114) {
         // R: új random állapot
         autoplay = 0;
@@ -101,7 +100,6 @@ void key_handler(SDLKey const key, SDL_Surface *screen, TTF_Font *font, int **ce
         (grid_enabled) ? (grid_enabled = 0) : (grid_enabled = 1);
         draw_state(screen, cells, grid_enabled);
         SDL_Flip(screen);
-        update_alive_cell_count(screen, font);
     }
 }
 
@@ -163,6 +161,15 @@ void click_handler(SDL_MouseButtonEvent const click, SDL_Surface *screen, TTF_Fo
             } else if(click_in_range(click, btn_height_minus_rect)) {
                 // Magasság [-] gomb
                 resize_handler(screen, font, cells, game_width, game_height-1);
+            } else if(click_in_range(click, text_grid_rect)) {
+                (grid_enabled) ? (grid_enabled = 0) : (grid_enabled = 1);
+                draw_state(screen, cells, grid_enabled);
+                if(grid_enabled) {
+                    draw_text(screen, font, "Grid....[x]", text_grid_rect, 1);
+                } else {
+                    draw_text(screen, font, "Grid....[  ]", text_grid_rect, 1);
+                }
+                SDL_Flip(screen);
             }
 
         } else if (click.y > cell_size * game_height) {

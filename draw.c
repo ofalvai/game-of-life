@@ -195,7 +195,11 @@ void draw_sidebar(SDL_Surface *screen, TTF_Font *font) {
     draw_image(screen, "assets/plus.png", btn_height_plus_rect);
     draw_image(screen, "assets/minus.png", btn_height_minus_rect);
 
-    draw_text(screen, font, "Grid.....[X]", text_grid_rect, 1);
+    if(grid_enabled) {
+        draw_text(screen, font, "Grid....[x]", text_grid_rect, 1);
+    } else {
+        draw_text(screen, font, "Grid....[  ]", text_grid_rect, 1);
+    }
 
     update_alive_cell_count(screen, font);
     update_game_dimensions(screen, font);

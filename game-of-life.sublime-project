@@ -4,7 +4,8 @@
 		{
 			"follow_symlinks": true,
 			"path": ".",
-            "file_exclude_patterns": [".gitignore"]
+            "file_exclude_patterns": [".gitignore", "doxyfile"],
+            "folder_exclude_patterns": ["doxygen"]
 		}
 	],
     "build_systems":
