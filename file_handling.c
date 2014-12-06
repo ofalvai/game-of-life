@@ -53,8 +53,8 @@ int read_file(char* const file_name, unsigned short **cells, int *game_width, in
         return 1;
     }
 
-    // 800px széles ablaknál nem lehet 400-nál több érték, plusz 399 szóköz, plusz '\0' 
-    char line[800];
+    // 800px széles ablaknál nem lehet 600-nál több érték, plusz 599 szóköz, plusz '\0' 
+    char line[1200];
     int i = 0;
     int *dimensions;
 

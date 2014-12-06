@@ -51,10 +51,10 @@ int count_living_neighbours(unsigned short **cells, int const x, int const y) {
  * @param cells 2 dimenziós tömbre mutató pointer
  */
 void random_state(unsigned short **cells) {
-    alive_cell_count = 0;
+    alive_cell_count = 0; // Reset
     int x, y;
-    double scale = 1.00;
-    int density = 4;
+    double scale = 1.00; // 1-nél kisebb szám esetén a bal felső sarokba generál
+    int density = 4; // Minél nagyobb, annál ritkább lesz az élő cella (1: minden cella élő)
     
     for(y = 0; y < game_height*scale; ++y) {
         for(x = 0; x < game_width*scale; ++x) {

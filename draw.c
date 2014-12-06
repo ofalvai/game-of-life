@@ -46,25 +46,25 @@ SDL_Rect text_alive_rect = { 618, 563, 200, 40};
  * @param grid Rajzoljon-e rácsot (keretet a négyzetre)
  */
  void draw_cell(SDL_Surface *screen, int x, int y, int color, int grid) {
-     int r, g, b, a;
-     if(color == 0) {
-         r = g = b = a = 255;
-     } else if(color == 1) {
-         r = g = b = 0;
-         a = 255;
-     }
-     float x_coord = x * cell_size;
-     float y_coord = y * cell_size;
+    int r, g, b, a;
+    if(color == 0) {
+        r = g = b = a = 255;
+    } else if(color == 1) {
+        r = g = b = 0;
+        a = 255;
+    }
+    double x_coord = x * cell_size;
+    double y_coord = y * cell_size;
 
-     if(grid) {
+    if(grid) {
         // Ha van grid, először rajzol egy grid színű, adott méretű négyzetet
-        boxRGBA(screen, x_coord, y_coord, x_coord+cell_size, y_coord+cell_size, 180, 180, 180, 255);
+        boxRGBA(screen, round(x_coord), round(y_coord), round(x_coord+cell_size), round(y_coord+cell_size), 180, 180, 180, 255);
         // Majd erre rárajzolja az 1-1-1-1 pixellel kisebb tényleges négyzetet
-        boxRGBA(screen, x_coord+1, y_coord+1, x_coord+cell_size-1, y_coord+cell_size-1, r, g, b, a);
+        boxRGBA(screen, round(x_coord+1), round(y_coord+1), round(x_coord+cell_size-1), round(y_coord+cell_size-1), r, g, b, a);
     } else {
         // Ha nincs grid, csak a négyzetet rajzolja, de 1-1 pixellel alacsonyabb és keskenyebb lesz
         // (Tehát a grid felső és bal vonalát felülírja, az alsót és jobbat nem)
-        boxRGBA(screen, x_coord, y_coord, x_coord+cell_size-1, y_coord+cell_size-1, r, g, b, a);
+        boxRGBA(screen, round(x_coord), round(y_coord), round(x_coord+cell_size-1), round(y_coord+cell_size-1), r, g, b, a);
     }
 
  }
@@ -257,17 +257,19 @@ void update_game_dimensions(SDL_Surface *screen, TTF_Font *font) {
 
     // Szegény ember text-align:center-je :'(
     // Ha háromjegyű a szám, kicsit balrább kerül
+    SDL_Rect new_width_rect = text_game_width_rect;
+    SDL_Rect new_height_rect = text_game_height_rect;
     if(game_width > 99) {
-        text_game_width_rect.x -= 10;
+        new_width_rect.x -= 10;
     }
     if(game_height > 99) {
-        text_game_height_rect.x -= 5;
+        new_height_rect.x -= 5;
     }
 
     // Valamiért túl nagy a szöveg surface-je bal-felül, ezért ha a draw_text() kitöltené a hátterét is,
     // az már belelógna felül a kirajzolt szegélybe.
     // Ezért inkább újrarajzoljuk a szegélyt, és redraw_bg=0-val hívjuk meg a draw_text()-et
     draw_image(screen, "assets/dimensions.png", input_dimensions_rect);
-    draw_text(screen, font, width_str, text_game_width_rect, 0);
-    draw_text(screen, font, height_str, text_game_height_rect, 0);
+    draw_text(screen, font, width_str, new_width_rect, 0);
+    draw_text(screen, font, height_str, new_height_rect, 0);
 }
