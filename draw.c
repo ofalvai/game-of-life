@@ -155,7 +155,7 @@ void redraw_empty_area(SDL_Surface *screen) {
  * @param cells Játékállapotot tartalmazó 2 dimenziós tömbre pointer
  * @param grid_enabled A kirajzolandó rács színe (0: fehér (kikapcsolt), 1: fekete).
  */
-void draw_state(SDL_Surface *screen, int **cells, int grid_enabled) {
+void draw_state(SDL_Surface *screen, unsigned short **cells, int grid_enabled) {
     int x, y;
     for(y = 0; y < game_height; ++y) {
         for(x = 0; x < game_width; ++x) {

@@ -31,7 +31,7 @@ void draw_text(SDL_Surface *screen, TTF_Font *font, char *text_str, SDL_Rect tex
 
 void redraw_empty_area(SDL_Surface *screen);
 
-void draw_state(SDL_Surface *screen, int **cells, int grid_enabled);
+void draw_state(SDL_Surface *screen, unsigned short **cells, int grid_enabled);
 
 void draw_sidebar(SDL_Surface *screen, TTF_Font *font);
 

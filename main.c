@@ -24,8 +24,8 @@ int main(int argc, char *argv[]) {
      * Azért van szükség egy másodikra, mert a következő kör kiértékelésekor egyszerre kell
      * vizsgálni minden cellát, nem lehet közben módosítani az aktuális kör értékeit.
      */
-    int **cells = arr_2d_create(game_width, game_height);
-    int **next_round_cells = arr_2d_create(game_width, game_height);
+    unsigned short **cells = arr_2d_create(game_width, game_height);
+    unsigned short **next_round_cells = arr_2d_create(game_width, game_height);
 
     /**
      * Parancssoros indítás:

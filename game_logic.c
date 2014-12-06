@@ -14,7 +14,7 @@
  * 
  * @return Élő szomszédok száma.
  */
-int count_living_neighbours(int** const cells, int const x, int const y) {
+int count_living_neighbours(unsigned short **cells, int const x, int const y) {
     int found = 0;
     if(x != 0 && y != 0 && cells[y-1][x-1])
         // Bal felső
@@ -50,7 +50,7 @@ int count_living_neighbours(int** const cells, int const x, int const y) {
  *
  * @param cells 2 dimenziós tömbre mutató pointer
  */
-void random_state(int **cells) {
+void random_state(unsigned short **cells) {
     alive_cell_count = 0;
     int x, y;
     double scale = 1.00;
@@ -78,7 +78,7 @@ void random_state(int **cells) {
  * @param **cells A jelenlegi játékállást tartalmazó 2 dimenziós tömbre pointer
  * @param **next_round_cells Ebbe írja az új kört
  */
-void enum_next_round(int** const cells, int **next_round_cells) {
+void enum_next_round(unsigned short **cells, unsigned short **next_round_cells) {
     // shared.c
     alive_cell_count = 0;
     int x, y;

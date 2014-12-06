@@ -33,7 +33,7 @@ int click_in_range(SDL_MouseButtonEvent click, SDL_Rect range) {
  * @param new_width Új szélesség (+-1)
  * @param new_height Új magasság (+-1)
  */
-void resize_handler(SDL_Surface *screen, TTF_Font *font, int **cells, int new_width, int new_height) {
+void resize_handler(SDL_Surface *screen, TTF_Font *font, unsigned short **cells, int new_width, int new_height) {
     // TODO: a másik tömböt is át kell méretezni!
     cells = arr_2d_resize(cells, game_width, game_height, new_width, new_height);
     game_width = new_width;
@@ -65,7 +65,7 @@ void resize_handler(SDL_Surface *screen, TTF_Font *font, int **cells, int new_wi
  * @param cells Jelenlegi játékállás adata
  * @param next_round_cells Következő kör adata
  */
-void key_handler(SDLKey const key, SDL_Surface *screen, TTF_Font *font, int **cells, int **next_round_cells) {
+void key_handler(SDLKey const key, SDL_Surface *screen, TTF_Font *font, unsigned short **cells, unsigned short **next_round_cells) {
     if(key == 27)
         // ESC: kilépés a programból
         SDL_Quit();
@@ -113,7 +113,7 @@ void key_handler(SDLKey const key, SDL_Surface *screen, TTF_Font *font, int **ce
  * @param cells Jelenlegi játékállás adata.
  * @param next_round_cells Következő kör adata.
  */
-void click_handler(SDL_MouseButtonEvent const click, SDL_Surface *screen, TTF_Font *font, int **cells, int **next_round_cells) {
+void click_handler(SDL_MouseButtonEvent const click, SDL_Surface *screen, TTF_Font *font, unsigned short **cells, unsigned short **next_round_cells) {
     if(click.button == SDL_BUTTON_LEFT) {
         // printf("x: %d, y: %d\n", click.x, click.y);
 

@@ -10,10 +10,10 @@
  * 
  * @return Pointer pointerekre, amik a sorokra mutatnak.
  */
-int **arr_2d_create(int const width, int const height) {
-    int **array;
-    array = (int **) calloc(height, sizeof(int*));
-    array[0] = (int *) calloc(height*width, sizeof(int));
+unsigned short **arr_2d_create(int const width, int const height) {
+    unsigned short **array;
+    array = (unsigned short **) calloc(height, sizeof(unsigned short*));
+    array[0] = (unsigned short *) calloc(height*width, sizeof(unsigned short));
 
     int i;
     for (i = 1; i < height; ++i) {
@@ -30,7 +30,7 @@ int **arr_2d_create(int const width, int const height) {
  * @param width másolandó tömb szélessége
  * @param height másolandó tömb magassága
  */
-void arr_2d_copy(int** const from, int **to, int const width, int const height) {
+void arr_2d_copy(unsigned short** const from, unsigned short **to, int const width, int const height) {
     int x, y;
     for(y = 0; y < height; ++y) {
         for(x = 0; x < width; ++x) {
@@ -39,8 +39,8 @@ void arr_2d_copy(int** const from, int **to, int const width, int const height) 
     }
 }
 
-int **arr_2d_resize(int **old_array, int const old_width, int const old_height, int const new_width, int const new_height) {
-    int **new_array = arr_2d_create(new_width, new_height);
+unsigned short **arr_2d_resize(unsigned short **old_array, int const old_width, int const old_height, int const new_width, int const new_height) {
+    unsigned short **new_array = arr_2d_create(new_width, new_height);
 
     int safe_width, safe_height;
     safe_width = (old_width > new_width ? new_width : old_width);
@@ -61,7 +61,7 @@ int **arr_2d_resize(int **old_array, int const old_width, int const old_height, 
  * @param width tömb szélessége
  * @param height tömb magassága
  */
-void arr_2d_clear(int **arr, int const width, int const height) {
+void arr_2d_clear(unsigned short **arr, int const width, int const height) {
     int x, y;
     for(y = 0; y < height; ++y) {
         for(x = 0; x < width; ++x) {

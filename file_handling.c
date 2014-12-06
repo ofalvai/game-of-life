@@ -46,7 +46,7 @@ int *split_line(char* const string, int const width) {
  * 
  * @return Beolvasás sikeressége: 0: nincs hiba, 1: valami hiba történt
  */
-int read_file(char* const file_name, int **cells, int *game_width, int *game_height) {
+int read_file(char* const file_name, unsigned short **cells, int *game_width, int *game_height) {
     FILE *fp;
     fp = fopen(file_name, "rt");
     if(fp == NULL) {

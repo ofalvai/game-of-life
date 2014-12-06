@@ -3,7 +3,7 @@
 
 int *split_line(char* const string, int const width);
 
-int read_file(char* const file_name, int **cells, int *game_width, int *game_height);
+int read_file(char* const file_name, unsigned short **cells, int *game_width, int *game_height);
 
 
 #endif
