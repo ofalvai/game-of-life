@@ -226,6 +226,8 @@ void toggle_start_pause(SDL_Surface *screen) {
     }
     SDL_BlitSurface(btn_start, NULL, screen, &btn_start_rect);
     free(btn_start);
+
+    SDL_Flip(screen);
 }
 
 

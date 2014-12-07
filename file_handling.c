@@ -58,7 +58,7 @@ int read_file(char* const file_name, unsigned short **cells, int *game_width, in
     int i = 0;
     int *dimensions;
 
-    while(fgets(line, 800, fp)) {
+    while(fgets(line, 1200, fp)) {
         if(i == 0) {
             // Első sor: szélesség szóköz magasság
             dimensions = split_line(line, 2);

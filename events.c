@@ -34,6 +34,9 @@ int click_in_range(SDL_MouseButtonEvent click, SDL_Rect range) {
  * @param new_height Új magasság (+-1)
  */
 void resize_handler(SDL_Surface *screen, TTF_Font *font, unsigned short **cells, unsigned short **next_round_cells, int new_width, int new_height) {
+    if(new_width > window_width-200 || new_height > window_height) {
+        return;
+    }
     cells = arr_2d_resize(cells, game_width, game_height, new_width, new_height);
     next_round_cells = arr_2d_resize(next_round_cells, game_width, game_height, new_width, new_height);
 
@@ -67,10 +70,10 @@ void resize_handler(SDL_Surface *screen, TTF_Font *font, unsigned short **cells,
  * @param next_round_cells Következő kör adata
  */
 void key_handler(SDLKey const key, SDL_Surface *screen, TTF_Font *font, unsigned short **cells, unsigned short **next_round_cells) {
-    if(key == 27)
+    if(key == 27) {
         // ESC: kilépés a programból
         SDL_Quit();
-    else if(key == 13) {
+    } else if(key == 13) {
         // Enter: következő állapotra ugrás
         clear(screen);
         enum_next_round(cells, next_round_cells);
@@ -100,6 +103,11 @@ void key_handler(SDLKey const key, SDL_Surface *screen, TTF_Font *font, unsigned
         // G: grid ki/be kapcsolása
         (grid_enabled) ? (grid_enabled = 0) : (grid_enabled = 1);
         draw_state(screen, cells, grid_enabled);
+        if(grid_enabled) {
+            draw_text(screen, font, "Grid....[x]", text_grid_rect, 1);
+        } else {
+            draw_text(screen, font, "Grid....[  ]", text_grid_rect, 1);
+        }
         SDL_Flip(screen);
     }
 }
