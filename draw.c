@@ -46,7 +46,7 @@ SDL_Rect text_alive_rect = { 618, 563, 200, 40};
  * @param grid Rajzoljon-e rácsot (keretet a négyzetre)
  */
  void draw_cell(SDL_Surface *screen, int x, int y, int color, int grid) {
-    int r, g, b, a;
+    int r, g, b, a = 0;
     if(color == 0) {
         r = g = b = a = 255;
     } else if(color == 1) {
@@ -186,14 +186,14 @@ void draw_sidebar(SDL_Surface *screen, TTF_Font *font) {
     draw_image(screen, "assets/rnd.png", btn_rnd_rect);
     draw_image(screen, "assets/clr.png", btn_clr_rect);
 
-    draw_text(screen, font, "SIZE:", text_game_size_rect, 1);
-    draw_image(screen, "assets/dimensions.png", input_dimensions_rect);
+    // draw_text(screen, font, "SIZE:", text_game_size_rect, 1);
+    // draw_image(screen, "assets/dimensions.png", input_dimensions_rect);
 
-    draw_image(screen, "assets/plus.png", btn_width_plus_rect);
-    draw_image(screen, "assets/minus.png", btn_width_minus_rect);
+    // draw_image(screen, "assets/plus.png", btn_width_plus_rect);
+    // draw_image(screen, "assets/minus.png", btn_width_minus_rect);
 
-    draw_image(screen, "assets/plus.png", btn_height_plus_rect);
-    draw_image(screen, "assets/minus.png", btn_height_minus_rect);
+    // draw_image(screen, "assets/plus.png", btn_height_plus_rect);
+    // draw_image(screen, "assets/minus.png", btn_height_minus_rect);
 
     if(grid_enabled) {
         draw_text(screen, font, "Grid....[x]", text_grid_rect, 1);
@@ -202,7 +202,7 @@ void draw_sidebar(SDL_Surface *screen, TTF_Font *font) {
     }
 
     update_alive_cell_count(screen, font);
-    update_game_dimensions(screen, font);
+    // update_game_dimensions(screen, font);
 
     SDL_Flip(screen);
 

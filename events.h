@@ -8,7 +8,7 @@ int click_in_range(SDL_MouseButtonEvent click, SDL_Rect range);
 
 void key_handler(SDLKey key, SDL_Surface *screen, TTF_Font *font, unsigned short **cells, unsigned short **next_round_cells);
 
-void resize_handler(SDL_Surface *screen, TTF_Font *font, unsigned short **cells, int new_width, int new_height);
+void resize_handler(SDL_Surface *screen, TTF_Font *font, unsigned short **cells, unsigned short **next_round_cells, int new_width, int new_height);
 
 void click_handler(SDL_MouseButtonEvent const button, SDL_Surface *screen, TTF_Font *font, unsigned short **cells, unsigned short **next_round_cells);
 

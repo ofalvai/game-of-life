@@ -40,19 +40,19 @@ void arr_2d_copy(unsigned short** const from, unsigned short **to, int const wid
 }
 
 unsigned short **arr_2d_resize(unsigned short **old_array, int const old_width, int const old_height, int const new_width, int const new_height) {
+    // Veszélyes, félkész, nem működik, és minden alkalommal meghal egy kiscica, ha használod.
+    
     unsigned short **new_array = arr_2d_create(new_width, new_height);
 
     int safe_width, safe_height;
     safe_width = (old_width > new_width ? new_width : old_width);
     safe_height = (old_height > new_height ? new_height : old_height);
 
-    printf("safe: %d, %d\n", safe_width, safe_height);
     arr_2d_copy(old_array, new_array, safe_width, safe_height);
-    // free(old_array[0]);
-    // free(old_array);
+    free(old_array[0]);
+    free(old_array);
 
     return new_array;
-    // return old_array;
 }
 
 /**
