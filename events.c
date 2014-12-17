@@ -197,7 +197,8 @@ void click_handler(SDL_MouseButtonEvent const click, SDL_Surface *screen, TTF_Fo
                 alive_cell_count--;
             }
             
-            draw_cell(screen, x, y, cells[y][x], grid_enabled);
+            draw_cell(screen, x, y, cells[y][x], grid_enabled, cells);
+            toggle_start_pause(screen);
             SDL_Flip(screen);
         }
     }

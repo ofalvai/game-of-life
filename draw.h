@@ -21,7 +21,7 @@ extern SDL_Rect btn_height_minus_rect;
 extern SDL_Rect text_grid_rect;
 extern SDL_Rect text_alive_rect; 
 
-void draw_cell(SDL_Surface *screen, int x, int y, int color, int grid);
+void draw_cell(SDL_Surface *screen, int x, int y, int color, int grid, unsigned short **cells);
 
 void clear(SDL_Surface *screen);
 

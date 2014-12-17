@@ -6,6 +6,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
+#include "game_logic.h"
 #include "shared.h"
 #include "draw.h"
 
@@ -45,12 +46,18 @@ SDL_Rect text_alive_rect = { 618, 563, 200, 40};
  * @param color Cella színe, 0: fehér (halott), 1: fekete (élő)
  * @param grid Rajzoljon-e rácsot (keretet a négyzetre)
  */
- void draw_cell(SDL_Surface *screen, int x, int y, int color, int grid) {
+ void draw_cell(SDL_Surface *screen, int x, int y, int color, int grid, unsigned short **cells) {
     int r, g, b, a = 0;
     if(color == 0) {
         r = g = b = a = 255;
     } else if(color == 1) {
-        r = g = b = 0;
+        // Ha élő cellát rajzol, akkor minél több szomszédja van, annál sötétebb lesz.
+        // limit: Mekkora tartományon változzon az árnyalalat
+        //        Minél nagyobb, anál kisebb a tartomány (sötétebbek és egyformábbak lesznek összességében)
+        // 32: 256 / 8 (max szomszédok száma)
+        float limit = 3.0;
+        float shade = (255 - (32 * count_living_neighbours(cells, x, y))) / limit;
+        r = g = b = shade;
         a = 255;
     }
     double x_coord = x * cell_size;
@@ -80,7 +87,7 @@ void clear(SDL_Surface *screen) {
     int x, y;
     for(x = 0; x < game_height; x++) {
         for(y = 0; y < game_width; y++) {
-            draw_cell(screen, y, x, 0, 0);
+            draw_cell(screen, y, x, 0, 0, NULL);
         }
     }
 }
@@ -159,7 +166,7 @@ void draw_state(SDL_Surface *screen, unsigned short **cells, int grid_enabled) {
     int x, y;
     for(y = 0; y < game_height; ++y) {
         for(x = 0; x < game_width; ++x) {
-            draw_cell(screen, x, y, cells[y][x], grid_enabled);
+            draw_cell(screen, x, y, cells[y][x], grid_enabled, cells);
         }
     }
     
