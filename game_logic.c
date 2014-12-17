@@ -54,12 +54,21 @@ void random_state(unsigned short **cells) {
     alive_cell_count = 0; // Reset
     int x, y;
     double scale = 1.00; // 1-nél kisebb szám esetén a bal felső sarokba generál
-    int density = 4; // Minél nagyobb, annál ritkább lesz az élő cella (1: minden cella élő)
-    
+    int density = 9; // Minél nagyobb, annál ritkább lesz az élő cella
+    int neighbour_factor = 4; // Minél nagyobb, annál nagyobb az esély az összefüggő szigetek képződésére
+
     for(y = 0; y < game_height*scale; ++y) {
         for(x = 0; x < game_width*scale; ++x) {
-            int rand_value = (rand() % density) == 0;
+            // Szigetek generálása
+            // Ha vannak élő cellák körülötte, nagyobb eséllyel lesz ő is élő
+            int modulo = density - count_living_neighbours(cells, x, y) - neighbour_factor;
+            if(modulo == 0) {
+                // Vigyázzunk nehogy feketelyukat csináljunk és/vagy felrobbantsuk az univerzumot...
+                modulo = 1;
+            }
+            int rand_value = (rand() % modulo) == 0;
             cells[y][x] = rand_value;
+
             alive_cell_count += rand_value;
         }
     }

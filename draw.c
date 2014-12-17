@@ -55,7 +55,7 @@ SDL_Rect text_alive_rect = { 618, 563, 200, 40};
         // limit: Mekkora tartományon változzon az árnyalalat
         //        Minél nagyobb, anál kisebb a tartomány (sötétebbek és egyformábbak lesznek összességében)
         // 32: 256 / 8 (max szomszédok száma)
-        float limit = 3.0;
+        float limit = 2.5;
         float shade = (255 - (32 * count_living_neighbours(cells, x, y))) / limit;
         r = g = b = shade;
         a = 255;

@@ -7,8 +7,8 @@
 int window_width = 800; 
 int window_height = 600;
 
-int game_width = 30; /**< Játéktér szélessége. 600-nál nem ajánlott nagyobbra kapcsolni, mert 1px-nél kisebb lesz egy cella. */
-int game_height = 30; /** Játéktér magassága. Itt sem érdemes 600 fölé menni. */
+int game_width = 40; /**< Játéktér szélessége. 600-nál nem ajánlott nagyobbra kapcsolni, mert 1px-nél kisebb lesz egy cella. */
+int game_height = 40; /** Játéktér magassága. Itt sem érdemes 600 fölé menni. */
 
 int autoplay = 0; /**< Időzítő be/kikapcsolása, ezzel lehet szüneteltetni a lejátszást */
 int grid_enabled = 1; /**< Rajzoljon-e keretet a cellák köré */
