@@ -19,7 +19,7 @@
  * @return 1, ha benne van, 0 ha nincs
  */
 
-int click_in_range(SDL_MouseButtonEvent click, SDL_Rect range) {
+static int click_in_range(SDL_MouseButtonEvent click, SDL_Rect range) {
     return click.x >= range.x && click.x <= range.x+range.w && click.y >= range.y && click.y <= range.y+range.h;
 }
 
@@ -33,7 +33,10 @@ int click_in_range(SDL_MouseButtonEvent click, SDL_Rect range) {
  * @param new_width Új szélesség (+-1)
  * @param new_height Új magasság (+-1)
  */
-void resize_handler(SDL_Surface *screen, TTF_Font *font, unsigned short **cells, unsigned short **next_round_cells, int new_width, int new_height) {
+static void resize_handler(SDL_Surface *screen, TTF_Font *font, unsigned short **cells, unsigned short **next_round_cells, int new_width, int new_height) {
+    // Ideiglenesen ki van kapcsolva!
+    return;
+
     if(new_width > window_width-200 || new_height > window_height) {
         return;
     }
@@ -155,19 +158,20 @@ void click_handler(SDL_MouseButtonEvent const click, SDL_Surface *screen, TTF_Fo
 
             } else if(click_in_range(click, btn_width_plus_rect)) {
                 // Szélesség [+] gomb
-                // resize_handler(screen, font, cells, next_round_cells, game_width+1, game_height);
+                resize_handler(screen, font, cells, next_round_cells, game_width+1, game_height);
 
             } else if(click_in_range(click, btn_width_minus_rect)) {
                 // Szélesség [-] gomb
-                // resize_handler(screen, font, cells, next_round_cells, game_width-1, game_height);
+                resize_handler(screen, font, cells, next_round_cells, game_width-1, game_height);
 
             } else if(click_in_range(click, btn_height_plus_rect)) {
                 // Magasság [+] gomb
-                // resize_handler(screen, font, cells, next_round_cells, game_width, game_height+1);
+                resize_handler(screen, font, cells, next_round_cells, game_width, game_height+1);
 
             } else if(click_in_range(click, btn_height_minus_rect)) {
                 // Magasság [-] gomb
-                // resize_handler(screen, font, cells, next_round_cells, game_width, game_height-1);
+                resize_handler(screen, font, cells, next_round_cells, game_width, game_height-1);
+
             } else if(click_in_range(click, text_grid_rect)) {
                 (grid_enabled) ? (grid_enabled = 0) : (grid_enabled = 1);
                 draw_state(screen, cells, grid_enabled);

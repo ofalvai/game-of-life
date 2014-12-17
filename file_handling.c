@@ -13,7 +13,7 @@
  * 
  * @return Dinamikusan foglalt tömb pointere.
  */
-int *split_line(char* const string, int const width) {
+static int *split_line(char* const string, int const width) {
     int *values = (int*) malloc(width * sizeof(int));
 
     char *value;
